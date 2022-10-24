@@ -31,6 +31,9 @@
         ];
 
         var geometry = new THREE.BoxGeometry(width, height, depth);
+
+        this.mesh = new THREE.Mesh(geometry, materials);
+        
     }
  }
 
