@@ -19,6 +19,90 @@
          * This project requires that it be run on a server to avoid violating CORS policy.
          **/
         import * as THREE from "three";
+    
+    // Objects
+        // Create the object to represent a triangle
+        // a, b, and c are arrays containing the xyz coordinates of the vertices to be used in the triangle.
+        // aCol, bCol, and cCol are the colors of the respective points.
+        function Plane (length, height) 
+        {
+            this.length = length;
+            this.height = height;
+
+            // The function that actually adds the triangle geometry to the scene
+            this.render = function() 
+            {
+                this.geometry = new THREE.PlaneGeometry(this.length, this.height);
+                
+                this.material = new THREE.MeshBasicMaterial({map: images[currImage], side: THREE.DoubleSide});
+                this.mesh = new THREE.Mesh(this.geometry, this.material);
+
+                scene.add(this.mesh);
+            }
+
+            this.change = function()
+            {
+                currImage = (currImage + 1) % images.length;
+                this.material.map = images[currImage];
+            }
+        };
+    // End Objects
+    // Functions
+
+    // End Functions
+    // Constants
+        // The colors for the puzzle.
+        const backgroundColor = [0, 0, 0];
+        const baseZoom = 6;
+    // End Constants
+    // Variables
+        var scene;
+        var camera;
+        var renderer;
+        var images = new Array();
+        var currImage = 0;
+    // End Variables
+
+        scene = new THREE.Scene();
+
+        camera = new THREE.PerspectiveCamera(125, window.innerWidth / window.innerHeight, .1, 3000);
+        camera.position.z = baseZoom;  // Try moving this around!
+        camera.lookAt(new THREE.Vector3(0.0,0.0,0.0));
+        scene.add(camera);
+
+        renderer = new THREE.WebGLRenderer({canvas: myCanvas, antialias: true});
+        renderer.setClearColor((new THREE.Color).fromArray(backgroundColor));
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        function animate()
+        {
+            requestAnimationFrame(animate);
+                
+            render();
+        }
+
+        function render()
+        {
+            renderer.render(scene, camera);
+        }
+
+        // The keyHandler provides functionality for the user to control the camera.
+        // This was done for Above and Beyond.
+        function keyHandler(e)
+        {
+            switch(e.keyCode)
+            {
+                // T case changes the texture.
+                case 84:
+                    quad.change();
+                    break;
+            }
+        };
+        
+        document.addEventListener("keydown", keyHandler, false);
+
+        // Animates the game.
+        animate();
     </script>
     </body>    
 </html> 
