@@ -3,6 +3,9 @@
         <title>CSC3210 Project 3</title>
     </head>
     <body>
+
+    <canvas id = "myCanvas" width = window.innerWidth height = window.innerHeight></canvas>
+    
     <script type = "importmap">
     {
         "imports": 
@@ -19,6 +22,8 @@
          * This project requires that it be run on a server to avoid violating CORS policy.
          **/
         import * as THREE from "three";
+        import { OrbitControls } from "http://cs.merrimack.edu/~stuetzlec/three.js-master/examples/jsm/controls/OrbitControls.js"
+        import { Card } from "./Card.js";
     
     // Objects
         // Create the object to represent a triangle
@@ -69,13 +74,31 @@
         scene = new THREE.Scene();
 
         camera = new THREE.PerspectiveCamera(125, window.innerWidth / window.innerHeight, .1, 3000);
-        camera.position.z = baseZoom;  // Try moving this around!
+        camera.position.z = baseZoom;
         camera.lookAt(new THREE.Vector3(0.0,0.0,0.0));
         scene.add(camera);
 
         renderer = new THREE.WebGLRenderer({canvas: myCanvas, antialias: true});
         renderer.setClearColor((new THREE.Color).fromArray(backgroundColor));
         renderer.setSize(window.innerWidth, window.innerHeight);
+
+        var loader = new THREE.TextureLoader();
+
+        var textures = 
+        [
+            loader.load("./Textures/paper.jpg"),
+            loader.load("./Textures/paper.jpg"),
+            loader.load("./Textures/paper.jpg"),
+            loader.load("./Textures/paper.jpg"),
+            loader.load("./Textures/Clovers_A_black.png"),
+            loader.load("./Textures/back.png")
+        ];
+
+        var card = new Card(13, "Clovers", textures);
+
+        scene.add(card.mesh);
+
+        var od = new OrbitControls(camera, renderer.domElement);
 
         function animate()
         {

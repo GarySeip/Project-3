@@ -10,7 +10,7 @@
         this.value = value;
         this.suit = suit;
         this.mesh;
-        constructBox(textures);
+        this.constructBox(textures);
     }
 
     constructBox(textures)
