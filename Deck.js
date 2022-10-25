@@ -2,6 +2,7 @@
  * 
  */
  import * as THREE from "three";
+import { Card } from "./Card";
 
  class Deck
  {
@@ -9,6 +10,56 @@
     {
         this.cards = new Array();
         this.score;
+    }
+
+    constructCards()
+    {
+        var values =
+        [
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "Jack",
+            "Queen",
+            "King",
+            "A"          
+        ];
+
+        var suits =
+        [
+            "Clovers",
+            "Hearts",
+            "Pikes",
+            "Tiles"
+        ];
+
+        var loader = new THREE.TextureLoader();
+        var paperTexture = loader.load("./Textures/paper.jpg");
+        var backTexture = loader.load("./Textures/back.png");
+        var cardTextures = new Array(6);
+
+        cardTextures[0] = paperTexture;
+        cardTextures[1] = paperTexture;
+        cardTextures[2] = paperTexture;
+        cardTextures[3] = paperTexture;
+        cardTextures[5] = cardTextures;
+        loader.load("./Textures/Clovers_A_black.png")
+        
+        for(var s = 0; s < suits.length; s++)
+        {
+            for(var v = 0; v < values.length; v++)
+            {
+                cardTextures[4] = loader.load("./Textures/" + suits[s] + "_" + values[v] + "_black.png");
+
+                this.cards.push(new Card(v + 2, suits[s], cardTextures.slice()));
+            }
+        }
     }
 
     /**
