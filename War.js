@@ -28,16 +28,21 @@
         for(var i = 0; i < this.players.length; i++)
             this.playerCards[i] = this.players[i].deck.pop();
 
+        this.totalCards = this.playerCards.slice();
+
         // To-do: Code to move cards into place.
          
-
-        findHighest();
-
-
+        var highestResult = this.findHighest();
+        
+        if(highestResult == -1)
+            this.doWar();
+        else
+            this.handleVictory(highestResult);
     }
 
     /**
-     * This function handles finding the highest value card in play or 
+     * This function handles finding the highest value card in play or if there is a tie for highest.
+     * 
      * @returns -1 if there is a tie for the highest, 0 if player 1 has the highest, 1 if player 2 has the highest,
      *           2 if player 3 has the highest.
      */
@@ -65,6 +70,28 @@
         // Checks for player 3 having the highest valued card.
         else
             return 2;
+    }
+
+    /**
+     * This function handles a given player winning the current round or war.
+     * 
+     * @param {Number} playerId The id of the player who has won.
+     */
+    handleVictory(playerId)
+    {
+        this.playerCards = new Array();
+
+        this.players[playerId].deck.addToBottom(this.totalCards);
+
+        this.totalCards = new Array();
+    }
+
+    /**
+     * This function handles an occurence of War.
+     */
+    doWar()
+    {
+
     }
  }
 

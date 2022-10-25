@@ -42,6 +42,22 @@
     }
 
     /**
+     * This function takes an aray of cards to add the bottom of the deck.
+     * 
+     * @param {[Card, Card, ...]} newCards 
+     */
+    addToBottom(newCards)
+    {
+        for(var i = 0; i < newCards.length; i++)
+            this.deck.push(newCards[i]);
+
+        // To-do: Update following code so it is not instant.
+        this.translateY(this.cards[0].depth * newCards.length);
+
+        // To-do: Code to visually move the cards into this position;
+    }
+
+    /**
      * This functions allows for moving all cards in the deck along the y-axis.
      * 
      * @param {Number} dist The distance to move along the y-axis.
