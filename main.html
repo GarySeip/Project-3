@@ -104,11 +104,12 @@
         // This was done for Above and Beyond.
         function keyHandler(e)
         {
-            switch(e.keyCode)
+            var key = e.key.toLowerCase();
+            switch(key)
             {
-                // T case changes the texture.
-                case 84:
-                    quad.change();
+                // N case advances the game.
+                case "n":
+                    // quad.change();
                     break;
             }
         };
