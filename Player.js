@@ -5,8 +5,9 @@
 
  class Player
  {
-    constructor()
+    constructor(idNum)
     {
+        this.playerId = idNum;
         this.deck;
         this.score;
     }

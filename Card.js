@@ -9,6 +9,7 @@
     {
         this.value = value;
         this.suit = suit;
+        this.mesh;
         constructBox(textures);
     }
 
@@ -33,7 +34,7 @@
         var geometry = new THREE.BoxGeometry(width, height, depth);
 
         this.mesh = new THREE.Mesh(geometry, materials);
-        
+
     }
  }
 

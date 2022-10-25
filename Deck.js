@@ -40,6 +40,17 @@
     {
         // Not yet implemented.
     }
+
+    /**
+     * This functions allows for moving all cards in the deck along the y-axis.
+     * 
+     * @param {Number} dist The distance to move along the y-axis.
+     */
+    translateY(dist)
+    {
+        for(var i = 0; i < this.cards.length; i++)
+            this.cards[i].mesh.translateY(dist);
+    }
  }
 
  export {Deck};
