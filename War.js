@@ -1,7 +1,7 @@
 /**
  * 
  */
- import * as THREE from "three";
+ import * as THREE from "http://cs.merrimack.edu/~stuetzlec/three.js-master/build/three.module.js";
 
  class War
  {

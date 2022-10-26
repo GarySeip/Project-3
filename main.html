@@ -5,15 +5,6 @@
     <body>
 
     <canvas id = "myCanvas" width = window.innerWidth height = window.innerHeight></canvas>
-    
-    <script type = "importmap">
-    {
-        "imports": 
-        {
-            "three": "http://cs.merrimack.edu/~stuetzlec/three.js-master/build/three.module.js"
-        }
-    }
-    </script>
 
     <script type = "module">
 
@@ -21,7 +12,7 @@
          * PLEASE NOTE
          * This project requires that it be run on a server to avoid violating CORS policy.
          **/
-        import * as THREE from "three";
+        import * as THREE from "http://cs.merrimack.edu/~stuetzlec/three.js-master/build/three.module.js";
         import { OrbitControls } from "http://cs.merrimack.edu/~stuetzlec/three.js-master/examples/jsm/controls/OrbitControls.js"
         import { Card } from "./Card.js";
     
