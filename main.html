@@ -54,6 +54,7 @@
         const depth = width / 52;
         const woodTable = "./Textures/table.jpg";
         const merriTable = "./Textures/merriTable.jpg";
+        const merriTableFelt = "./Textures/merrTable.png";
     // End Constants
     // Variables
         var scene;
@@ -78,7 +79,7 @@
         renderer.setSize(window.innerWidth, window.innerHeight);
 
         var table = new Plane(160, 90);
-        table.render(woodTable);
+        table.render(merriTableFelt);
         table.mesh.rotation.x = 3 * Math.PI / 2;
         table.mesh.position.setY(0 - depth / 2);
 
