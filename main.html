@@ -57,6 +57,10 @@
         const merriTableFelt = "./Textures/merriTable.png";
         const defaultAmbience = new THREE.Color(1, 1, 1);
         const ambientIntensity = 1;
+        const defaultMovingPoint = new THREE.Color(1, 0, 1);
+        const movingLightIntensity = 2;
+        const movingLightHeight = 10;
+        const movingLightSpeed = 50;
     // End Constants
     // Variables
         var scene;
@@ -67,7 +71,8 @@
         var prevTime;
         var time;
         var delta;
-        var movingLight = new THREE.PointLight();
+        var movingLight = new THREE.PointLight(defaultMovingPoint, movingLightIntensity, 0, 2);
+        var movingLightOn = true;
         var ambientLight = new THREE.AmbientLight(defaultAmbience, ambientIntensity);
         var ambienceOn = true;
     // End Variables
@@ -88,13 +93,6 @@
         table.mesh.rotation.x = 3 * Math.PI / 2;
         table.mesh.position.setY(0 - depth / 2);
 
-        var box = new THREE.BoxGeometry();
-        var mat = new THREE.MeshPhongMaterial();
-        var msh = new THREE.Mesh(box, mat);
-        scene.add(msh);
-
-        msh.position.setY(5);
-
         // Test code
         var deck = new Deck(width, height, depth);
         deck.constructCards();
@@ -102,6 +100,9 @@
         // End test code
         
         scene.add(ambientLight);
+        scene.add(movingLight);
+
+        movingLight.translateY(movingLightHeight);
 
         var od = new OrbitControls(camera, renderer.domElement);
 
@@ -154,27 +155,36 @@
                     break;
                 // P case toggles moveable point light.
                 case "p":
-
+                    if(movingLightOn)
+                    {
+                        movingLight.intensity = 0;
+                        movingLightOn = false;
+                    }
+                    else
+                    {
+                        movingLight.intensity = movingLightIntensity;
+                        movingLightOn = true;
+                    }
                     break;
                 // M case toggles shadows.
                 case "m":
 
                     break;
-                // W case increases the light's Z value.
+                // W case decreases the light's Z value.
                 case "w":
-
+                    movingLight.position.add(new THREE.Vector3(0, 0, movingLightSpeed * -delta));
                     break;
                 // A case decreases the light's X value.
                 case "a":
-
+                    movingLight.position.add(new THREE.Vector3(movingLightSpeed * -delta, 0, 0));
                     break;
-                // S case decreases the light's Z value.
+                // S case increases the light's Z value.
                 case "s":
-
+                    movingLight.position.add(new THREE.Vector3(0, 0, movingLightSpeed * delta));
                     break;
                 // D case increases the light's X value.
                 case "d":
-
+                    movingLight.position.add(new THREE.Vector3(movingLightSpeed * delta, 0, 0));
                     break;
             }
         };
