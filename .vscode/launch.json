@@ -7,7 +7,7 @@
         {
             "type": "msedge",
             "request": "launch",
-            "name": "Open CSC3210NoureddineSeipProject2.html",
+            "name": "Open main.html",
             "url": "http://127.0.0.1:5501/main.html",
             "webRoot": "${workspaceFolder}"
         }

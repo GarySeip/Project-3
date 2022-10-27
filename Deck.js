@@ -2,7 +2,7 @@
  * 
  */
  import * as THREE from "http://cs.merrimack.edu/~stuetzlec/three.js-master/build/three.module.js";
-import { Card } from "./Card";
+ import { Card } from "./Card.js";
 
  class Deck
  {
@@ -48,8 +48,8 @@ import { Card } from "./Card";
         cardTextures[1] = paperTexture;
         cardTextures[2] = paperTexture;
         cardTextures[3] = paperTexture;
-        cardTextures[5] = cardTextures;
-        loader.load("./Textures/Clovers_A_black.png")
+        cardTextures[5] = backTexture;
+        loader.load("./Textures/Clovers_A_black.png");
         
         for(var s = 0; s < suits.length; s++)
         {
@@ -59,6 +59,31 @@ import { Card } from "./Card";
 
                 this.cards.push(new Card(v + 2, suits[s], cardTextures.slice()));
             }
+        }
+    }
+
+    /**
+     * This is a testing function meant to be used with OrbitalControls to ensures that the textures for
+     * all of the cards have been properly input and rendered.
+     * 
+     * @param {Scene} scene 
+     */
+    cardRenderTest(scene)
+    {
+        // depMov is the depth horizontal distance to move the cards before placement.
+        const depMov = 1.1 * this.cards[0].depth;
+        
+        var toMov = new THREE.Vector3(0, 0, depMov);
+
+        var currLoc = new THREE.Vector3(0.0, 0.0, 0.0);
+
+        for(var i = 0; i < this.cards.length; i++)
+        {
+            scene.add(this.cards[i].mesh);
+
+            this.cards[i].mesh.position.set(currLoc.x, currLoc.y, currLoc.z);
+
+            currLoc.add(toMov);
         }
     }
 

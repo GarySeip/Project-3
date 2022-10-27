@@ -15,6 +15,7 @@
         import * as THREE from "http://cs.merrimack.edu/~stuetzlec/three.js-master/build/three.module.js";
         import { OrbitControls } from "http://cs.merrimack.edu/~stuetzlec/three.js-master/examples/jsm/controls/OrbitControls.js"
         import { Card } from "./Card.js";
+        import { Deck } from "./Deck.js";
     
     // Objects
         // Create the object to represent a triangle
@@ -72,22 +73,6 @@
         renderer = new THREE.WebGLRenderer({canvas: myCanvas, antialias: true});
         renderer.setClearColor((new THREE.Color).fromArray(backgroundColor));
         renderer.setSize(window.innerWidth, window.innerHeight);
-
-        var loader = new THREE.TextureLoader();
-
-        var textures = 
-        [
-            loader.load("./Textures/paper.jpg"),
-            loader.load("./Textures/paper.jpg"),
-            loader.load("./Textures/paper.jpg"),
-            loader.load("./Textures/paper.jpg"),
-            loader.load("./Textures/Clovers_A_black.png"),
-            loader.load("./Textures/back.png")
-        ];
-
-        var card = new Card(13, "Clovers", textures);
-
-        scene.add(card.mesh);
 
         var od = new OrbitControls(camera, renderer.domElement);
 
