@@ -33,7 +33,7 @@
 
                 this.geometry = new THREE.PlaneGeometry(this.length, this.height);
                 
-                this.material = new THREE.MeshBasicMaterial({map: loader.load(imagePath), side: THREE.DoubleSide});
+                this.material = new THREE.MeshPhongMaterial({map: loader.load(imagePath), side: THREE.DoubleSide});
                 this.mesh = new THREE.Mesh(this.geometry, this.material);
 
                 scene.add(this.mesh);
@@ -54,7 +54,9 @@
         const depth = width / 52;
         const woodTable = "./Textures/table.jpg";
         const merriTable = "./Textures/merriTable.jpg";
-        const merriTableFelt = "./Textures/merrTable.png";
+        const merriTableFelt = "./Textures/merriTable.png";
+        const defaultAmbience = new THREE.Color(1, 1, 1);
+        const ambientIntensity = 1;
     // End Constants
     // Variables
         var scene;
@@ -65,6 +67,9 @@
         var prevTime;
         var time;
         var delta;
+        var movingLight = new THREE.PointLight();
+        var ambientLight = new THREE.AmbientLight(defaultAmbience, ambientIntensity);
+        var ambienceOn = true;
     // End Variables
 
         scene = new THREE.Scene();
@@ -83,11 +88,20 @@
         table.mesh.rotation.x = 3 * Math.PI / 2;
         table.mesh.position.setY(0 - depth / 2);
 
+        var box = new THREE.BoxGeometry();
+        var mat = new THREE.MeshPhongMaterial();
+        var msh = new THREE.Mesh(box, mat);
+        scene.add(msh);
+
+        msh.position.setY(5);
+
         // Test code
         var deck = new Deck(width, height, depth);
         deck.constructCards();
         deck.cardRenderTest(scene);
         // End test code
+        
+        scene.add(ambientLight);
 
         var od = new OrbitControls(camera, renderer.domElement);
 
@@ -127,7 +141,16 @@
                     break;
                 // L case toggles ambient light.
                 case "l":
-
+                    if(ambienceOn)
+                    {
+                        ambientLight.intensity = 0;
+                        ambienceOn = false;
+                    }
+                    else
+                    {
+                        ambientLight.intensity = ambientIntensity;
+                        ambienceOn = true;
+                    }
                     break;
                 // P case toggles moveable point light.
                 case "p":

@@ -16,6 +16,8 @@
         this.totalCards = new Array();
         // players holds the array of Player objects.
         this.players = players;
+        // Boolean tracks if there is an active war.
+        this.warActive = false;
     }
 
     /**
@@ -35,7 +37,10 @@
         var highestResult = this.findHighest();
         
         if(highestResult == -1)
+        {
+            warActive = true;
             this.doWar();
+        }
         else
             this.handleVictory(highestResult);
     }

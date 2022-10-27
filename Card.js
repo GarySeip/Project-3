@@ -22,12 +22,12 @@
         var currTexture = 0; 
         var materials = 
         [
-            new THREE.MeshBasicMaterial({map: textures[currTexture++]}),
-            new THREE.MeshBasicMaterial({map: textures[currTexture++]}),
-            new THREE.MeshBasicMaterial({map: textures[currTexture++]}),
-            new THREE.MeshBasicMaterial({map: textures[currTexture++]}),
-            new THREE.MeshBasicMaterial({map: textures[currTexture++]}),
-            new THREE.MeshBasicMaterial({map: textures[currTexture]})
+            new THREE.MeshPhongMaterial({map: textures[currTexture++]}),
+            new THREE.MeshPhongMaterial({map: textures[currTexture++]}),
+            new THREE.MeshPhongMaterial({map: textures[currTexture++]}),
+            new THREE.MeshPhongMaterial({map: textures[currTexture++]}),
+            new THREE.MeshPhongMaterial({map: textures[currTexture++]}),
+            new THREE.MeshPhongMaterial({map: textures[currTexture]})
         ];
 
         var geometry = new THREE.BoxGeometry(this.width, this.height, this.depth);
