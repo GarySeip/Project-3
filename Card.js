@@ -33,7 +33,8 @@
         var geometry = new THREE.BoxGeometry(this.width, this.height, this.depth);
 
         this.mesh = new THREE.Mesh(geometry, materials);
-
+        this.mesh.castShadow = true;
+        this.mesh.receiveShadow = true;
     }
  }
 

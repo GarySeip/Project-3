@@ -35,13 +35,18 @@
                 
                 this.material = new THREE.MeshPhongMaterial({map: loader.load(imagePath), side: THREE.DoubleSide});
                 this.mesh = new THREE.Mesh(this.geometry, this.material);
+                this.mesh.receiveShadow = true;
 
                 scene.add(this.mesh);
             }
         };
     // End Objects
     // Functions
-
+        function toggleShadows()
+        {
+            for(var i = 0; i < lightArray.length; i++)
+                lightArray[i].castShadow = !lightArray[i].castShadow;
+        }
     // End Functions
     // Constants
         // The colors for the puzzle.
@@ -75,6 +80,7 @@
         var movingLightOn = true;
         var ambientLight = new THREE.AmbientLight(defaultAmbience, ambientIntensity);
         var ambienceOn = true;
+        var lightArray = [movingLight];
     // End Variables
 
         scene = new THREE.Scene();
@@ -87,6 +93,7 @@
         renderer = new THREE.WebGLRenderer({canvas: myCanvas, antialias: true});
         renderer.setClearColor((new THREE.Color).fromArray(backgroundColor));
         renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
 
         var table = new Plane(160, 90);
         table.render(merriTableFelt);
@@ -99,10 +106,12 @@
         deck.cardRenderTest(scene);
         // End test code
         
+        // Adds the lights to the scene.
         scene.add(ambientLight);
         scene.add(movingLight);
 
         movingLight.translateY(movingLightHeight);
+        movingLight.castShadow = true;
 
         var od = new OrbitControls(camera, renderer.domElement);
 
@@ -138,7 +147,8 @@
             {
                 // N case advances the game.
                 case "n":
-                    
+                    console.log(deck.cards.length);
+                    console.log(table);
                     break;
                 // L case toggles ambient light.
                 case "l":
@@ -168,7 +178,7 @@
                     break;
                 // M case toggles shadows.
                 case "m":
-
+                    toggleShadows();
                     break;
                 // W case decreases the light's Z value.
                 case "w":
