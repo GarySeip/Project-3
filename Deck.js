@@ -74,9 +74,9 @@
     cardRenderTest(scene)
     {
         // depMov is the depth horizontal distance to move the cards before placement.
-        const depMov = 1.1 * this.depth;
+        const depMov = 1.0 * this.depth;
         
-        var toMov = new THREE.Vector3(0, 0, depMov);
+        var toMov = new THREE.Vector3(0, depMov, 0);
 
         var currLoc = new THREE.Vector3(0.0, 0.0, 0.0);
 
@@ -85,6 +85,8 @@
             scene.add(this.cards[i].mesh);
 
             this.cards[i].mesh.position.set(currLoc.x, currLoc.y, currLoc.z);
+            this.cards[i].mesh.rotation.x = Math.PI / 2;
+            this.cards[i].mesh.rotation.z = Math.PI;
 
             currLoc.add(toMov);
         }
