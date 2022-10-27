@@ -53,7 +53,6 @@
         cardTextures[2] = paperTexture;
         cardTextures[3] = paperTexture;
         cardTextures[5] = backTexture;
-        loader.load("./Textures/Clovers_A_black.png");
         
         for(var s = 0; s < suits.length; s++)
         {

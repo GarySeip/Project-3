@@ -21,7 +21,7 @@
         // Create the object to represent a triangle
         // a, b, and c are arrays containing the xyz coordinates of the vertices to be used in the triangle.
         // aCol, bCol, and cCol are the colors of the respective points.
-        function Plane (length, height) 
+        function Plane (length, height, imagePath) 
         {
             this.length = length;
             this.height = height;
@@ -29,9 +29,11 @@
             // The function that actually adds the triangle geometry to the scene
             this.render = function() 
             {
+                var loader = new THREE.TextureLoader();
+
                 this.geometry = new THREE.PlaneGeometry(this.length, this.height);
                 
-                this.material = new THREE.MeshBasicMaterial({map: images[currImage], side: THREE.DoubleSide});
+                this.material = new THREE.MeshBasicMaterial({map: loader.load(imagePath), side: THREE.DoubleSide});
                 this.mesh = new THREE.Mesh(this.geometry, this.material);
 
                 scene.add(this.mesh);
