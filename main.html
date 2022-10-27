@@ -51,6 +51,11 @@
         // The colors for the puzzle.
         const backgroundColor = [0, 0, 0];
         const baseZoom = 6;
+        // 655 and 930 are respectively the width and height of the card images.
+        const width = 655 / 200;
+        const height = 930 / 200;
+        // This will make a full deck of cards look like a square when viewed along the length of the cards.
+        const depth = width / 52;
     // End Constants
     // Variables
         var scene;
@@ -73,6 +78,11 @@
         renderer = new THREE.WebGLRenderer({canvas: myCanvas, antialias: true});
         renderer.setClearColor((new THREE.Color).fromArray(backgroundColor));
         renderer.setSize(window.innerWidth, window.innerHeight);
+
+        var deck = new Deck(width, height, depth);
+
+        deck.constructCards();
+        deck.cardRenderTest(scene);
 
         var od = new OrbitControls(camera, renderer.domElement);
 

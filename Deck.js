@@ -6,8 +6,12 @@
 
  class Deck
  {
-    constructor()
+    constructor(width, height, depth)
     {
+        this.width = width;
+        this.height = height;
+        this.depth = depth;
+
         this.cards = new Array();
         this.score;
     }
@@ -57,7 +61,7 @@
             {
                 cardTextures[4] = loader.load("./Textures/" + suits[s] + "_" + values[v] + "_black.png");
 
-                this.cards.push(new Card(v + 2, suits[s], cardTextures.slice()));
+                this.cards.push(new Card(v + 2, suits[s], cardTextures.slice(), this.width, this.height, this.depth));
             }
         }
     }
@@ -71,7 +75,7 @@
     cardRenderTest(scene)
     {
         // depMov is the depth horizontal distance to move the cards before placement.
-        const depMov = 1.1 * this.cards[0].depth;
+        const depMov = 1.1 * this.depth;
         
         var toMov = new THREE.Vector3(0, 0, depMov);
 
@@ -128,7 +132,7 @@
             this.deck.push(newCards[i]);
 
         // To-do: Update following code so it is not instant.
-        this.translateY(this.cards[0].depth * newCards.length);
+        this.translateY(this.depth * newCards.length);
 
         // To-do: Code to visually move the cards into this position;
     }
