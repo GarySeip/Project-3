@@ -1,6 +1,24 @@
 <html>
     <head>
         <title>CSC3210 Project 3</title>
+        <!-- 
+            CSC3210 Project 2
+            Authors: Jad Noureddine and Garald Seip
+
+            This file serves as a driver for the project. It imports requires files and sets up
+            the scene, the camera, and the animation loop. It also sets up several of the basic components such as
+            the table and lighting.
+
+            For our above and beyond, we !!!!!!!!!!!!!!!!!!!!!!!!!
+                                         !!!!!!!!!!!!!!!!!!!!!!!!!
+                                         !!!!!!!!!!!!!!!!!!!!!!!!!
+                                         !!!!!!!!!!!!!!!!!!!!!!!!!
+                                         !!!!!! UPDATE THIS !!!!!!
+                                         !!!!!!!!!!!!!!!!!!!!!!!!!
+                                         !!!!!!!!!!!!!!!!!!!!!!!!!
+                                         !!!!!!!!!!!!!!!!!!!!!!!!!
+                                         !!!!!!!!!!!!!!!!!!!!!!!!!
+        -->
     </head>
     <body>
 
@@ -42,6 +60,9 @@
         };
     // End Objects
     // Functions
+        /**
+         * This function toggles every non-ambient light's ability to cast shadows.
+         */
         function toggleShadows()
         {
             for(var i = 0; i < lightArray.length; i++)
@@ -55,31 +76,45 @@
         // 655 and 930 are respectively the width and height of the card images.
         const width = 655 / 200;
         const height = 930 / 200;
-        // This will make a full deck of cards look like a square when viewed along the length of the cards.
+        // Dividing by 52 will make a full deck of cards look like a square when viewed along the length of the cards.
         const depth = width / 52;
+        // The filepaths for several possible table textures.
         const woodTable = "./Textures/table.jpg";
         const merriTable = "./Textures/merriTable.jpg";
         const merriTableFelt = "./Textures/merriTable.png";
+        // defautlAmbience is the default color (white) of the ambient light.
         const defaultAmbience = new THREE.Color(1, 1, 1);
+        // ambientInensity is the intensity of the ambient light.
         const ambientIntensity = 1;
+        // defaultMovingPoint is the default color (purple) of the moving point light.
         const defaultMovingPoint = new THREE.Color(1, 0, 1);
+        // movingLightIntensity is the intensity of the moving point light.
         const movingLightIntensity = 2;
+        // movingLightHeight is the height of the moving point light.
         const movingLightHeight = 10;
+        // movingLightSpeed is the speed at which the moving point light moves.
         const movingLightSpeed = 50;
     // End Constants
     // Variables
         var scene;
         var camera;
         var renderer;
-        var images = new Array();
-        var currImage = 0;
+        // prevTime stores the time the last frame was rendered.
         var prevTime;
+        // time stores the time the current frame was rendered.
         var time;
+        // delta stores the time difference between the current frame and the last frame in seconds.
         var delta;
+        // movingLight is the moving point light.
         var movingLight = new THREE.PointLight(defaultMovingPoint, movingLightIntensity, 0, 2);
+        // movingLightOn stores whether the moving point light is on.
         var movingLightOn = true;
+        // ambientLight is the ambient light.
         var ambientLight = new THREE.AmbientLight(defaultAmbience, ambientIntensity);
+        // ambienceOn stores if the ambient light is on.
         var ambienceOn = true;
+        // lightArray stores the lights in the scene that cast shadows. More than just movingLight are planned to be
+        // added later.
         var lightArray = [movingLight];
     // End Variables
 
@@ -95,6 +130,7 @@
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.shadowMap.enabled = true;
 
+        // Creates the table and places it correctly.
         var table = new Plane(160, 90);
         table.render(merriTableFelt);
         table.mesh.rotation.x = 3 * Math.PI / 2;
@@ -105,13 +141,14 @@
         deck.constructCards();
         deck.cardRenderTest(scene);
         // End test code
+
+        // Sets up the moving light.
+        movingLight.translateY(movingLightHeight);
+        movingLight.castShadow = true;
         
         // Adds the lights to the scene.
         scene.add(ambientLight);
         scene.add(movingLight);
-
-        movingLight.translateY(movingLightHeight);
-        movingLight.castShadow = true;
 
         var od = new OrbitControls(camera, renderer.domElement);
 
@@ -119,15 +156,18 @@
         {
             requestAnimationFrame(animate);
             
+            // Gets the current time.
             time = performance.now();
 
             if(true /* Render boolean */)
             {
+                // Gets the time difference between the current frame and the last frame in seconds.
                 delta = (time - prevTime) / 1000;
 
 
             }
 
+            // Updates when the previous frame was rendered.
             prevTime = time;
                 
             render();
@@ -147,6 +187,7 @@
             {
                 // N case advances the game.
                 case "n":
+                    // These will be removed later.
                     console.log(deck.cards.length);
                     console.log(table);
                     break;
@@ -201,7 +242,9 @@
         
         document.addEventListener("keydown", keyHandler, false);
 
+        // Initializes prevTime.
         var prevTime = performance.now();
+
         // Animates the game.
         animate();
     </script>

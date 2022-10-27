@@ -1,11 +1,20 @@
 /**
- * 
+ * Author: Garald Seip
+ * This class implements functionality for manipulating a deck of cards. It is responsible for loading in the appropriate
+ * textures for the face of each card.
  */
  import * as THREE from "http://cs.merrimack.edu/~stuetzlec/three.js-master/build/three.module.js";
  import { Card } from "./Card.js";
 
  class Deck
  {
+    /**
+     * The constructor takes in the dimensions of the cards and creates an array to hold the cards.
+     * 
+     * @param {Number} width The card width.
+     * @param {Number} height The card height.
+     * @param {Number} depth The card depth.
+     */
     constructor(width, height, depth)
     {
         this.width = width;
@@ -13,11 +22,14 @@
         this.depth = depth;
 
         this.cards = new Array();
-        this.score;
     }
 
+    /**
+     * This function loads the textures for each card and creates them. Afterward, they are put into the cards array.
+     */
     constructCards()
     {
+        // The possible values as recorded in the file names.
         var values =
         [
             "2",
@@ -35,6 +47,7 @@
             "A"          
         ];
 
+        // The card suits.
         var suits =
         [
             "Clovers",
@@ -44,16 +57,22 @@
         ];
 
         var loader = new THREE.TextureLoader();
+        // The texture for the sides of the cards.
         var paperTexture = loader.load("./Textures/paper.jpg");
+        // The texture for the back of the cards.
         var backTexture = loader.load("./Textures/back.png");
+        // The textures for each card.
         var cardTextures = new Array(6);
 
+        // Sets the sides of the card to the paper texture.
         cardTextures[0] = paperTexture;
         cardTextures[1] = paperTexture;
         cardTextures[2] = paperTexture;
         cardTextures[3] = paperTexture;
+        // Sets the back of the card to the back texture.
         cardTextures[5] = backTexture;
         
+        // Loads the appropriate face textures and creates the cards.
         for(var s = 0; s < suits.length; s++)
         {
             for(var v = 0; v < values.length; v++)
