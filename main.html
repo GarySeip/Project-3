@@ -136,8 +136,8 @@
         var animRunning = false;
         var players = [new Player(0), new Player(1), new Player(2)];
         var war = new War(players);
-        var deck = new Deck(width, height, depth);
         var animationArray = new Array();
+        var deck = new Deck(width, height, depth, animationArray);
     // End Variables
 
         scene = new THREE.Scene();
@@ -170,6 +170,10 @@
         // Adds the lights to the scene.
         scene.add(ambientLight);
         scene.add(movingLight);
+
+        var temp = deck.cards.pop();
+        temp.mesh.position.set(10, 3, 10);
+        temp.mesh.rotation.x += Math.PI / 2;
 
         var od = new OrbitControls(camera, renderer.domElement);
 
@@ -213,7 +217,8 @@
                 // N case advances the game.
                 case "n":
                     if(!animRunning)
-                        war.advanceGameStep();
+                        // war.advanceGameStep();
+                        deck.addToBottom([temp]);
                     break;
                 // L case toggles ambient light.
                 case "l":

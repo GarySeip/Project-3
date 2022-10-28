@@ -167,23 +167,36 @@
     }
 
     /**
-     * This function takes an aray of cards to add the bottom of the deck.
+     * This function takes an array of cards to add the bottom of the deck. Also moves cards in the deck up by the 
+     * appropriate ammount.
      * 
      * @param {[Card, Card, ...]} newCards 
      */
     addToBottom(newCards)
     {
-        for(var i = 0; i < deck.cards.length; i++)
-            this.animationArray.push(new AnimationHelper(
-                deck.cards[i].mesh, 
-                deck.cards[i].mesh.position.clone().setY(deck.cards[i].mesh.position.y + this.depth),
-                null, false, null, null));
+        var newPos;
+        var newRot;
+        var offset = newCards.length * this.depth;
+
+        for(var i = 0; i < this.cards.length; i++)
+        {
+            newPos = this.cards[i].mesh.position.clone().setY(this.cards[i].mesh.position.y + offset); 
+
+            this.animationArray.push(new AnimationHelper(this.cards[i].mesh, newPos, null, false, null, null));
+        }
+        
+        newPos.y = 0;
+
+        newRot = this.cards[0].mesh.rotation;
 
         for(var i = 0; i < newCards.length; i++)
-            this.deck.push(newCards[i]);
+        {
+            this.cards.push(newCards[i]);
 
+            this.animationArray.push(new AnimationHelper(newCards[i].mesh, newPos, newRot, false, null, null));
 
-        // To-do: Code to visually move the cards into this position;
+            newPos.y += this.depth;
+        }
     }
  }
 
