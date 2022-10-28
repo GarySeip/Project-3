@@ -87,18 +87,15 @@
     }
 
     /**
-     * This is a testing function meant to be used with OrbitalControls to ensures that the textures for
-     * all of the cards have been properly input and rendered.
+     * This function sets up the deck in the center of the table.
      * 
-     * @param {Scene} scene 
+     * @param {Scene} scene The scene of the program.
      */
-    cardRenderTest(scene)
-    {
-        // depMov is the depth horizontal distance to move the cards before placement.
-        const depMov = 1.0 * this.depth;
-        
-        var toMov = new THREE.Vector3(0, depMov, 0);
-
+    spawnDeck(scene)
+    {        
+        // toMov is the offset between cards.
+        var toMov = new THREE.Vector3(0, this.depth, 0);
+        // currLoc is where the current card is to be placed.
         var currLoc = new THREE.Vector3(0.0, 0.0, 0.0);
 
         for(var i = 0; i < this.cards.length; i++)

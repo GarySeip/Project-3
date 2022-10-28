@@ -158,10 +158,8 @@
         table.mesh.rotation.x = 3 * Math.PI / 2;
         table.mesh.position.setY(-0.01 - depth / 2);
 
-        // Test code
         deck.constructCards();
-        deck.cardRenderTest(scene);
-        // End test code
+        deck.spawnDeck(scene);
 
         // Sets up the moving light.
         movingLight.translateY(movingLightHeight);
