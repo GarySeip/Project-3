@@ -174,10 +174,14 @@
      */
     addToBottom(newCards)
     {
+        // newPos holds the position to set a card to.
         var newPos;
+        // newRot holds the rotation to set a card to..
         var newRot;
+        // offset holds how much to increase a card's height.
         var offset = newCards.length * this.depth;
 
+        // Sets all cards already in the deck to move up and make room for new cards.
         for(var i = 0; i < this.cards.length; i++)
         {
             newPos = this.cards[i].mesh.position.clone().setY(this.cards[i].mesh.position.y + offset); 
@@ -185,10 +189,12 @@
             this.animationArray.push(new AnimationHelper(this.cards[i].mesh, newPos, null, false, null, null));
         }
         
+        // The new cards will have the same x and z coordinates but start from y = 0.
         newPos.y = 0;
-
+        // Gets the proper orientation for the new cards.
         newRot = this.cards[0].mesh.rotation;
 
+        // Sets all new cards to go into their appropriate position at the bottom of the deck.
         for(var i = 0; i < newCards.length; i++)
         {
             this.cards.push(newCards[i]);
