@@ -36,6 +36,7 @@
         import { Deck } from "./Deck.js";
         import { Player } from "./Player.js";
         import { War } from "./War.js";
+        import { AnimationHelper } from "./AnimationHelper.js";
     
     // Objects
         // Create the object to represent a triangle
@@ -69,6 +70,18 @@
         {
             for(var i = 0; i < lightArray.length; i++)
                 lightArray[i].castShadow = !lightArray[i].castShadow;
+        }
+
+        /**
+         * This function handles progressing every animation in the animationArray.
+         */
+        function handleAnimations()
+        {
+            // Progresses every animation every frame.
+            for(var i = animationArray.length - 1; i >= 0; i--)
+                if(animationArray[i].animate(delta))
+                    // If an animation has finished, it is removed from the array.
+                    animationArray.splice(i, 1);
         }
     // End Functions
     // Constants
@@ -122,6 +135,7 @@
         var players = [new Player(0), new Player(1), new Player(2)];
         var war = new War(players);
         var deck = new Deck(width, height, depth);
+        var animationArray = new Array();
     // End Variables
 
         scene = new THREE.Scene();
@@ -167,13 +181,14 @@
             if(true /* Render boolean */)
             {
                 // Gets the time difference between the current frame and the last frame in seconds.
-                delta = (time - prevTime) / 1000;
+                // delta = (time - prevTime) / 1000;
+                delta = 0.015;
 
-
+                handleAnimations();
             }
 
             // Outputs the camera's position so that OrbitControls can be used to find a good camera angle.
-            console.log(camera.position.toArray());
+            // console.log(camera.position.toArray());
 
             // Updates when the previous frame was rendered.
             prevTime = time;
@@ -195,8 +210,10 @@
             {
                 // N case advances the game.
                 case "n":
-                    if(!gameRunning)
+                    if(gameRunning)
                         war.advanceGameStep();
+                    animationArray.push(new AnimationHelper(scene, deck.cards[0].mesh, new THREE.Vector3(-10, 0, -10),
+                                                            new THREE.Euler(0, 0, 0), false, null));
                     break;
                 // L case toggles ambient light.
                 case "l":

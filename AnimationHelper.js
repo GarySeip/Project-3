@@ -37,10 +37,10 @@
 
         // Records if this isntance is to use an animation function.
         this.useAniFunc = useAniFunc;
-        this.aniFunc() = aniFunc;
+        this.aniFunc = aniFunc;
 
-        // How fast objects move or rotate by default.
-        this.speedFactor = 10;
+        // How fast objects move and/or rotate by default.
+        this.speedFactor = 2;
 
         // If an animation function is not to be used, sets up variables for use in linear movement.
         if(!useAniFunc)
@@ -105,11 +105,23 @@
         else
         {
             // If the movement is not finished, moves the object in the appropriate direction.
-            if(!moveDone)
+            if(!this.moveDone)
             {
-                var newPos = this.object.position.clone().add(this.moveVector.multiplyScalar(this.moveSpeed * delta));
-                var currDist = this.endPos.clone().sub(object.position).length();
-                var newDist = this.newPos.clone().sub(object.position).length();
+                var currDist = this.endPos.clone().sub(this.object.position).length();
+
+                // I tried using .localToWorld and .worldToLocal to avoid doing this but for some reason
+                // the objects would keep going the wrong way. So now the rotation is reset to default right before
+                // movement and set back.
+                var currRot = this.object.rotation.clone();
+                this.object.rotation.set(0, 0, 0);
+
+                // Moves the object.
+                this.object.translateOnAxis(this.moveVector, this.moveSpeed * delta);
+
+                // Sets rotation to the current rotation.
+                this.object.rotation.set(currRot.x, currRot.y, currRot.z);
+
+                var newDist = this.endPos.clone().sub(this.object.position).length();
 
                 // If the object will have moved past the end position, then it is set to the end position.
                 if(newDist >= currDist)
@@ -117,9 +129,6 @@
                     this.object.position.set(this.endPos.x, this.endPos.y, this.endPos.z);
                     this.moveDone = true;
                 }
-                // Updates the object's position.
-                else
-                    this.object.position.set(newPos.x, newPos.y, newPos.z);
             }
 
             // If the x-axis rotation is not completed, rotates the object about the x-axis.
