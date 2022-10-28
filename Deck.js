@@ -131,6 +131,16 @@
           // And swap it with the current element.
           [this.cards[currentIndex], this.cards[randomIndex]] = [this.cards[randomIndex], this.cards[currentIndex]];
         }
+
+        // newPos stores the position to set a card to.
+        var newPos = this.cards[0].position.clone().setY(0 - this.depth);
+        
+        // Sets each card to move into its new position.
+        for(var i = 0; i < this.cards.length; i++)
+        {
+            newPos.y += this.depth;
+            this.animationArray.push(new AnimationHelper(this.cards[i].mesh, newPos.clone(), null, false, null, null));
+        }
     }
 
     /**
@@ -157,16 +167,6 @@
     }
 
     /**
-     * This function plays an animation to visually indicate the shuffling of the cards.
-     * 
-     * @param {Number} delta The difference in time between the current frame and the previosu frame.
-     */
-    shuffleAnimation(delta)
-    {
-        // Not yet implemented.
-    }
-
-    /**
      * This function takes an array of cards to add the bottom of the deck. Also moves cards in the deck up by the 
      * appropriate ammount.
      * 
@@ -186,11 +186,11 @@
         {
             newPos = this.cards[i].mesh.position.clone().setY(this.cards[i].mesh.position.y + offset); 
 
-            this.animationArray.push(new AnimationHelper(this.cards[i].mesh, newPos, null, false, null, null));
+            this.animationArray.push(new AnimationHelper(this.cards[i].mesh, newPos.clone(), null, false, null, null));
         }
         
         // The new cards will have the same x and z coordinates but start from y = 0.
-        newPos.y = 0;
+        newPos.y = 0 - this.depth;
         // Gets the proper orientation for the new cards.
         newRot = this.cards[0].mesh.rotation;
 
@@ -199,9 +199,9 @@
         {
             this.cards.push(newCards[i]);
 
-            this.animationArray.push(new AnimationHelper(newCards[i].mesh, newPos, newRot, false, null, null));
-
             newPos.y += this.depth;
+
+            this.animationArray.push(new AnimationHelper(newCards[i].mesh, newPos.clone(), newRot, false, null, null));
         }
     }
  }
