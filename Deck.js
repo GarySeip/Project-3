@@ -132,6 +132,29 @@
     }
 
     /**
+     * This function splits the cards in a deck into a number of decks defined by the number of players. Each new deck
+     * is equal in size. Leftover cards can remain in this deck after this function is called.
+     * 
+     * @param {Number} numPlayers The number of players to split the deck into.
+     * @returns An array of cards composed of equal subsets of this deck. The array is equal to the size of numPlayers.
+     */
+    split(numPlayers)
+    {
+        // deckSize is the number of cards to go in each new deck.
+        var deckSize = Math.floor(this.cards.length / numPlayers);
+        
+        // newDecks stores the new decks.
+        var newDecks = new Array();
+
+        // Populates newDecks.
+        for(var i = 0; i < numPlayers; i++)
+            newDecks.push(this.cards.splice(0, deckSize));
+
+        // Returns newDecks.
+        return newDecks;
+    }
+
+    /**
      * This function plays an animation to visually indicate the shuffling of the cards.
      * 
      * @param {Number} delta The difference in time between the current frame and the previosu frame.
