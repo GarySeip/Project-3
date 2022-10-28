@@ -133,7 +133,7 @@
         }
 
         // newPos stores the position to set a card to.
-        var newPos = this.cards[0].position.clone().setY(0 - this.depth);
+        var newPos = this.cards[0].mesh.position.clone().setY(0 - this.depth);
         
         // Sets each card to move into its new position.
         for(var i = 0; i < this.cards.length; i++)

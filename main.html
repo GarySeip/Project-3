@@ -156,7 +156,7 @@
         var table = new Plane(160, 90);
         table.render(merriTableFelt);
         table.mesh.rotation.x = 3 * Math.PI / 2;
-        table.mesh.position.setY(0 - depth / 2);
+        table.mesh.position.setY(-0.01 - depth / 2);
 
         // Test code
         deck.constructCards();
@@ -170,10 +170,6 @@
         // Adds the lights to the scene.
         scene.add(ambientLight);
         scene.add(movingLight);
-
-        var temp = deck.cards.pop();
-        temp.mesh.position.set(10, 3, 10);
-        temp.mesh.rotation.x += Math.PI / 2;
 
         var od = new OrbitControls(camera, renderer.domElement);
 
@@ -218,7 +214,7 @@
                 case "n":
                     if(!animRunning)
                         // war.advanceGameStep();
-                        deck.addToBottom([temp]);
+                        deck.shuffle();
                     break;
                 // L case toggles ambient light.
                 case "l":
