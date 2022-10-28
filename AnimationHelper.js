@@ -92,10 +92,11 @@
     }
 
     /**
+     * This function moves the object along a linear path toward the desired endpoint while rotating it into
+     * the desired orientation. Otherwise, uses a custom animation function.
      * 
-     * 
-     * @param {*} delta 
-     * @returns 
+     * @param {Number} delta The time difference between the current frame and the previous frame in seconds.
+     * @returns True if the animation has completed, false otherwise.
      */
     animate(delta)
     {
