@@ -34,6 +34,8 @@
         import { OrbitControls } from "http://cs.merrimack.edu/~stuetzlec/three.js-master/examples/jsm/controls/OrbitControls.js"
         import { Card } from "./Card.js";
         import { Deck } from "./Deck.js";
+        import { Player } from "./Player.js";
+        import { War } from "./War.js";
     
     // Objects
         // Create the object to represent a triangle
@@ -170,6 +172,9 @@
 
             }
 
+            // Outputs the camera's position so that OrbitControls can be used to find a good camera angle.
+            console.log(camera.position.toArray());
+
             // Updates when the previous frame was rendered.
             prevTime = time;
                 
@@ -225,19 +230,23 @@
                     break;
                 // W case decreases the light's Z value.
                 case "w":
-                    movingLight.position.add(new THREE.Vector3(0, 0, movingLightSpeed * -delta));
+                    if(movingLightOn)
+                        movingLight.position.add(new THREE.Vector3(0, 0, movingLightSpeed * -delta));
                     break;
                 // A case decreases the light's X value.
                 case "a":
-                    movingLight.position.add(new THREE.Vector3(movingLightSpeed * -delta, 0, 0));
+                    if(movingLightOn)
+                        movingLight.position.add(new THREE.Vector3(movingLightSpeed * -delta, 0, 0));
                     break;
                 // S case increases the light's Z value.
                 case "s":
-                    movingLight.position.add(new THREE.Vector3(0, 0, movingLightSpeed * delta));
+                    if(movingLightOn)
+                        movingLight.position.add(new THREE.Vector3(0, 0, movingLightSpeed * delta));
                     break;
                 // D case increases the light's X value.
                 case "d":
-                    movingLight.position.add(new THREE.Vector3(movingLightSpeed * delta, 0, 0));
+                    if(movingLightOn)
+                        movingLight.position.add(new THREE.Vector3(movingLightSpeed * delta, 0, 0));
                     break;
             }
         };
