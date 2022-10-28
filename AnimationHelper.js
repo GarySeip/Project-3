@@ -7,20 +7,19 @@
  class AnimationHelper
  {
     /**
-     * The constructor takes in the scene, the object, and whether to move the object in a linear path toward
+     * The constructor takes in the object, and whether to move the object in a linear path toward
      * its destination or use an animation function. 
      * 
-     * @param {Scene} scene The scene.
      * @param {Object3D} object The object to animate.
      * @param {Vector3} endPos The desired end position of the object.
      * @param {Euler} endRot The desired end rotation of the object.
      * @param {Boolean} useAniFunc Whether or not to use a provided animation function.
      * @param {function} aniFunc An animation function to use instead of moving along a linear path. Must return "true" when 
      *                           completed.
+     * @param {json} jsonData JSON data for custom animations.
      */
-    constructor(scene, object, endPos, endRot, useAniFunc, aniFunc)
+    constructor(object, endPos, endRot, useAniFunc, aniFunc, jsonData)
     {
-        this.scene = scene;
         this.object = object;
         // Ensures the rotations are less than tau.
         this.object.rotation.x = this.object.rotation.x % (Math.PI * 2);
@@ -31,13 +30,16 @@
 
         this.endRot = endRot;
         // Ensures the desired end rotation is less than tau.
-        this.endRot.x = this.endRot.x % (Math.PI * 2);
-        this.endRot.y = this.endRot.y % (Math.PI * 2);
-        this.endRot.z = this.endRot.z % (Math.PI * 2);
-
+        if(endRot != null)
+        {
+            this.endRot.x = this.endRot.x % (Math.PI * 2);
+            this.endRot.y = this.endRot.y % (Math.PI * 2);
+            this.endRot.z = this.endRot.z % (Math.PI * 2);
+        }
         // Records if this isntance is to use an animation function.
         this.useAniFunc = useAniFunc;
         this.aniFunc = aniFunc;
+        this.jsonData = jsonData;
 
         // How fast objects move and/or rotate by default.
         this.speedFactor = 2;
@@ -45,10 +47,13 @@
         // If an animation function is not to be used, sets up variables for use in linear movement.
         if(!useAniFunc)
         {
-            this.moveVector = endPos.clone().sub(object.position);
-            // This ensures that all movement take the same amount of time.
-            this.moveSpeed = this.moveVector.length() / this.speedFactor;
-            this.moveVector.normalize();
+            if(endPos != null)
+            {
+                this.moveVector = endPos.clone().sub(object.position);
+                // This ensures that all movement take the same amount of time.
+                this.moveSpeed = this.moveVector.length() / this.speedFactor;
+                this.moveVector.normalize();
+            }
 
             // The rotation speeds along each axis.
             this.rotXSpeed;
@@ -57,10 +62,10 @@
             
             // If the object is not already in the appropriate location and orientation, these variables
             // record if the movement and rotation are done.
-            this.moveDone = this.moveSpeed == 0;
-            this.rotXDone = this.object.rotation.x == this.endRot.x;
-            this.rotYDone = this.object.rotation.y == this.endRot.y;
-            this.rotZDone = this.object.rotation.z == this.endRot.z;
+            this.moveDone = endPos == null || this.moveSpeed == 0;
+            this.rotXDone = endRot == null || this.object.rotation.x == endRot.x;
+            this.rotYDone = endRot == null || this.object.rotation.y == endRot.y;
+            this.rotZDone = endRot == null || this.object.rotation.z == endRot.z;
 
             // Gets the appropriate rotation speed in the appropriate direction for the x axis.
             if(!this.rotXDone)
@@ -101,7 +106,7 @@
     animate(delta)
     {
         if(this.useAniFunc)
-            return this.aniFunc();
+            return this.aniFunc(delta, this.jsonData);
         else
         {
             // If the movement is not finished, moves the object in the appropriate direction.

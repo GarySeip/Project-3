@@ -82,6 +82,8 @@
                 if(animationArray[i].animate(delta))
                     // If an animation has finished, it is removed from the array.
                     animationArray.splice(i, 1);
+            
+            animRunning = animationArray.length != 0;
         }
     // End Functions
     // Constants
@@ -131,7 +133,7 @@
         // lightArray stores the lights in the scene that cast shadows. More than just movingLight are planned to be
         // added later.
         var lightArray = [movingLight];
-        var gameRunning = false;
+        var animRunning = false;
         var players = [new Player(0), new Player(1), new Player(2)];
         var war = new War(players);
         var deck = new Deck(width, height, depth);
@@ -210,10 +212,8 @@
             {
                 // N case advances the game.
                 case "n":
-                    if(gameRunning)
+                    if(!animRunning)
                         war.advanceGameStep();
-                    animationArray.push(new AnimationHelper(scene, deck.cards[0].mesh, new THREE.Vector3(-10, 0, -10),
-                                                            new THREE.Euler(0, 0, 0), false, null));
                     break;
                 // L case toggles ambient light.
                 case "l":

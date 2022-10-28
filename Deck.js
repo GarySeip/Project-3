@@ -5,6 +5,7 @@
  */
  import * as THREE from "http://cs.merrimack.edu/~stuetzlec/three.js-master/build/three.module.js";
  import { Card } from "./Card.js";
+ import { AnimationHelper } from "./AnimationHelper.js";
 
  class Deck
  {
@@ -15,11 +16,12 @@
      * @param {Number} height The card height.
      * @param {Number} depth The card depth.
      */
-    constructor(width, height, depth)
+    constructor(width, height, depth, animationArray)
     {
         this.width = width;
         this.height = height;
         this.depth = depth;
+        this.animationArray = animationArray;
 
         this.cards = new Array();
     }
@@ -171,24 +173,17 @@
      */
     addToBottom(newCards)
     {
+        for(var i = 0; i < deck.cards.length; i++)
+            this.animationArray.push(new AnimationHelper(
+                deck.cards[i].mesh, 
+                deck.cards[i].mesh.position.clone().setY(deck.cards[i].mesh.position.y + this.depth),
+                null, false, null, null));
+
         for(var i = 0; i < newCards.length; i++)
             this.deck.push(newCards[i]);
 
-        // To-do: Update following code so it is not instant.
-        this.translateY(this.depth * newCards.length);
 
         // To-do: Code to visually move the cards into this position;
-    }
-
-    /**
-     * This functions allows for moving all cards in the deck along the y-axis.
-     * 
-     * @param {Number} dist The distance to move along the y-axis.
-     */
-    translateY(dist)
-    {
-        for(var i = 0; i < this.cards.length; i++)
-            this.cards[i].mesh.translateY(dist);
     }
  }
 
