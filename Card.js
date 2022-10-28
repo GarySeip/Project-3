@@ -10,7 +10,7 @@
      * The constructor takes in all of the details of the card and creates the card mesh.
      * 
      * @param {Number} value The value of the card from 2 - 13.
-     * @param {String} suit The suit of the card.
+     * @param {String} suit The suit of the card. Does not matter in War but is stored regardless.
      * @param {[Texture, Texture, Texture, Texture, Texture, Texture]} textures The textures of the card.
      * @param {Number} width The card width.
      * @param {Number} height The card height.

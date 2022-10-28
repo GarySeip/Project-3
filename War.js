@@ -22,6 +22,8 @@
         this.warCards = new Array();
         // players holds the array of Player objects.
         this.players = players;
+        // stillIn holds which players remain in the game.
+        this.stillIn = [true, true, true];
         // Boolean tracks if there is an active war.
         this.warActive = false;
     }
@@ -36,13 +38,19 @@
 
         // Gets the top car of each player's deck.
         // There needs to be different code for updating the cards during a war.
-        // There needs to be code for handling when a player does not have any cards. When a player is out of cards, their
-        //      card's value should permanently be set to 0.
         for(var i = 0; i < this.players.length; i++)
-            this.playerCards[i] = this.players[i].deck.pop();
-
-        // Puts the current cards of each player into the warCards array.
-        this.warCards = this.playerCards.slice();
+        {
+            if(this.players[i].deck.length != 0)
+            {
+                this.playerCards[i] = this.players[i].deck.pop();
+                this.warCards.push(this.playerCards[i]);
+            }
+            else if(this.stillIn[i])
+            {
+                this.stillIn[i] = false;
+                this.playerCards[i].value = 0;
+            }
+        }
 
         // To-do: Code to move cards into place.
          
@@ -82,7 +90,7 @@
         // Checks for player 2 having the highest valued card.
         else if(val1 > val0 && val1 > val2)
             return 1;
-        // Checks for player 3 having the highest valued card.
+        // Player 3 has the highest valued card.
         else
             return 2;
     }
@@ -97,8 +105,7 @@
         // Give the appropriate player the new cards.
         this.players[playerId].deck.addToBottom(this.warCards);
 
-        // Resets the player and war cards arrays.
-        this.playerCards = new Array();
+        // Resets the warCards arrays.
         this.warCards = new Array();
     }
 

@@ -116,6 +116,10 @@
         // lightArray stores the lights in the scene that cast shadows. More than just movingLight are planned to be
         // added later.
         var lightArray = [movingLight];
+        var gameRunning = false;
+        var players = [new Player(0), new Player(1), new Player(2)];
+        var war = new War(players);
+        var deck = new Deck(width, height, depth);
     // End Variables
 
         scene = new THREE.Scene();
@@ -137,7 +141,6 @@
         table.mesh.position.setY(0 - depth / 2);
 
         // Test code
-        var deck = new Deck(width, height, depth);
         deck.constructCards();
         deck.cardRenderTest(scene);
         // End test code
@@ -187,9 +190,8 @@
             {
                 // N case advances the game.
                 case "n":
-                    // These will be removed later.
-                    console.log(deck.cards.length);
-                    console.log(table);
+                    if(gameRunning)
+                        war.advanceGameStep();
                     break;
                 // L case toggles ambient light.
                 case "l":
