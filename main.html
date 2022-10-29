@@ -83,6 +83,9 @@
                     // If an animation has finished, it is removed from the array.
                     animationArray.splice(i, 1);
             
+            if(animationArray.length == 0)
+                handleScoreLights();
+            
             animRunning = animationArray.length != 0;
         }
     // End Functions
@@ -99,14 +102,11 @@
         const woodTable = "./Textures/table.jpg";
         const merriTable = "./Textures/merriTable.jpg";
         const merriTableFelt = "./Textures/merriTable.png";
-        // defautlAmbience is the default color (white) of the ambient light.
-        const defaultAmbience = new THREE.Color(1, 1, 1);
         // ambientInensity is the intensity of the ambient light.
         const ambientIntensity = 1;
-        // defaultMovingPoint is the default color (purple) of the moving point light.
-        const defaultMovingPoint = new THREE.Color(1, 0, 1);
         // movingLightIntensity is the intensity of the moving point light.
         const movingLightIntensity = 2;
+        const playerLightIntesnity = 10;
         // movingLightHeight is the height of the moving point light.
         const movingLightHeight = 10;
         // movingLightSpeed is the speed at which the moving point light moves.
@@ -122,22 +122,25 @@
         var time;
         // delta stores the time difference between the current frame and the last frame in seconds.
         var delta;
-        // movingLight is the moving point light.
-        var movingLight = new THREE.PointLight(defaultMovingPoint, movingLightIntensity, 0, 2);
-        // movingLightOn stores whether the moving point light is on.
-        var movingLightOn = true;
-        // ambientLight is the ambient light.
-        var ambientLight = new THREE.AmbientLight(defaultAmbience, ambientIntensity);
-        // ambienceOn stores if the ambient light is on.
-        var ambienceOn = true;
-        // lightArray stores the lights in the scene that cast shadows. More than just movingLight are planned to be
-        // added later.
-        var lightArray = [movingLight];
-        var animRunning = false;
         var players = [new Player(0), new Player(1), new Player(2)];
         var war = new War(players);
         var animationArray = new Array();
         var deck = new Deck(width, height, depth, animationArray);
+        // movingLight is the moving point light.
+        var movingLight = new THREE.PointLight(new THREE.Color(1, 0, 1), movingLightIntensity, 0, 2);
+        // movingLightOn stores whether the moving point light is on.
+        var movingLightOn = true;
+        // ambientLight is the ambient light.
+        var ambientLight = new THREE.AmbientLight(new THREE.Color(1, 1, 1), ambientIntensity);
+        // ambienceOn stores if the ambient light is on.
+        var ambienceOn = true;
+        // The lights for each player's score.
+        var player0Light = new THREE.SpotLight(new THREE.Color(1, 1, 1), playerLightIntesnity, 0);
+        var player1Light = new THREE.SpotLight(new THREE.Color(1, 0, 0), playerLightIntesnity, 0);
+        var player2Light = new THREE.SpotLight(new THREE.Color(0, 1, 0), playerLightIntesnity, 0);
+        // lightArray stores the lights in the scene that cast shadows. 
+        var lightArray = [movingLight, player0Light, player1Light, player2Light];
+        var animRunning = false;
     // End Variables
 
         scene = new THREE.Scene();
@@ -165,6 +168,14 @@
         // Sets up the moving light.
         movingLight.translateY(movingLightHeight);
         movingLight.castShadow = true;
+
+        // Sets up the spotlights.
+        player0Light.translateY(movingLightHeight * 2);
+        player0Light.castShadow = true;
+        player1Light.translateY(movingLightHeight * 2);
+        player1Light.castShadow = true;
+        player2Light.translateY(movingLightHeight * 2);
+        player2Light.castShadow = true;
         
         // Adds the lights to the scene.
         scene.add(ambientLight);
