@@ -170,29 +170,6 @@
         scene.add(ambientLight);
         scene.add(movingLight);
 
-        var vec = new THREE.Vector3(5, 0, 0);
-
-        var boxGeo = new THREE.BoxGeometry(1, 1, 1);
-        var boxMat = new THREE.MeshPhongMaterial();
-        var box = new THREE.Mesh(boxGeo, boxMat);
-        var tempBox;
-        
-        for(var o = 0; o < 50; o++)
-        {
-            for(var i = 0; i < 360; i++)
-            {
-                tempBox = box.clone();
-                tempBox.position.set(vec.clone().x, vec.clone().y, vec.clone().z);
-                vec.applyAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 180);
-                scene.add(tempBox);
-                animationArray.push(new AnimationHelper(tempBox, 
-                                    new THREE.Vector3(Math.random() * 50 - 25, Math.random() * 50 - 25, 
-                                    Math.random() * 50 - 25), null, false, null, null));
-            }
-
-            vec.multiplyScalar(1.5);
-        }
-
         var od = new OrbitControls(camera, renderer.domElement);
 
         function animate()
