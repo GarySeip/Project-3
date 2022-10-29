@@ -3,6 +3,8 @@
  * This class implements the functionality of the War card game for three players.
  */
  import * as THREE from "http://cs.merrimack.edu/~stuetzlec/three.js-master/build/three.module.js";
+ import { Deck } from "./Deck.js";
+ import { AnimationHelper } from "./AnimationHelper.js";
 
  class War
  {
@@ -11,7 +13,7 @@
      * 
      * @param {[Player, Player, Player]} players The array of players.
      */
-    constructor(players)
+    constructor(animationArray, players, deck, width, height, depth)
     {
         // playerCards will hold up to 3 Card objects, one for each player. These are the cards
         // currently being compared.
@@ -22,10 +24,25 @@
         this.warCards = new Array();
         // players holds the array of Player objects.
         this.players = players;
+        //
+        this.animationArray = animationArray;
+        this.deck = deck;
         // stillIn holds which players remain in the game.
         this.stillIn = [true, true, true];
         // Boolean tracks if there is an active war.
         this.warActive = false;
+        // 
+        this.roundCount = 0;
+        //
+        this.deckShuff = false;
+        //
+        this.deckSplit = false;
+        //
+        this.width = width;
+        //
+        this.height = height;
+        //
+        this.depth = depth;
     }
 
     /**
@@ -35,32 +52,71 @@
     {
         if(this.warActive)
             this.doWar();
-
-        // Gets the top car of each player's deck.
-        // There needs to be different code for updating the cards during a war.
-        for(var i = 0; i < this.players.length; i++)
+        else if(!this.deckShuff)
         {
-            if(this.players[i].deck.length != 0)
+            this.deck.shuffle();
+            this.deckShuff = true;
+        }
+        else if(!this.deckSplit)
+        {
+            var deckArray = this.deck.split(3);
+
+            this.players[0].deck = new Deck(this.width, this.height, this.depth, this.animationArray); 
+            this.players[1].deck = new Deck(this.width, this.height, this.depth, this.animationArray); 
+            this.players[2].deck = new Deck(this.width, this.height, this.depth, this.animationArray); 
+            
+            this.players[0].deck.cards = deckArray[0];
+            this.players[1].deck.cards = deckArray[1];
+            this.players[2].deck.cards = deckArray[2];
+
+            for(var o = 0; o < this.players.length; o++)
             {
-                this.playerCards[i] = this.players[i].deck.pop();
-                this.warCards.push(this.playerCards[i]);
+                var newPos = this.players[o].deckPos.clone().setY(0 - this.depth);
+                console.log("Outside");
+
+                for(var i = 0; i < this.players[o].deck.cards.length; i++)
+                {
+                    newPos.y += this.depth;
+                    this.animationArray.push(new AnimationHelper(this.players[o].deck.cards[i].mesh, newPos.clone(), this.players[o].deckRot, false, null, null))
+                    console.log("Inside");
+                }
             }
-            else if(this.stillIn[i])
+
+            this.deckSplit = true;
+            
+        }
+        else
+        {
+            this.roundCount = 0;
+            // Gets the top card of each player's deck.
+            // There needs to be different code for updating the cards during a war.
+            for(var i = 0; i < this.players.length; i++)
             {
-                this.stillIn[i] = false;
-                this.playerCards[i].value = 0;
+                if(this.players[i].deck.length != 0)
+                {
+                    this.playerCards[i] = this.players[i].deck.cards.pop();
+                    this.warCards.push(this.playerCards[i]);
+                }
+                else if(this.stillIn[i])
+                {
+                    this.stillIn[i] = false;
+                    this.playerCards[i].value = 0;
+                }
+                
             }
+
+            // To-do: Code to move cards into place.
+            
+            var highestResult = this.findHighest();
+            
+            // If there is a war, sets warActive to true. Otherwise handles the appropriate player's victory.
+            if(highestResult == -1)
+                warActive = true;
+            else
+                this.handleVictory(highestResult);
+                
         }
 
-        // To-do: Code to move cards into place.
-         
-        var highestResult = this.findHighest();
-        
-        // If there is a war, sets warActive to true. Otherwise handles the appropriate player's victory.
-        if(highestResult == -1)
-            warActive = true;
-        else
-            this.handleVictory(highestResult);
     }
 
     /**
@@ -114,7 +170,43 @@
      */
     doWar()
     {
+        this.roundCount++;
+        // Gets the top card of each player's deck.
+        // There needs to be different code for updating the cards during a war.
+        for(var i = 0; i < this.players.length; i++)
+        {
+            // If there are cards remaining | Draw face-down Card
+            if(this.players[i].deck.length != 0)
+            {
+                this.playerCards[i] = this.players[i].deck.cards.pop();
+                this.warCards.push(this.playerCards[i]);
+            }
 
+            // If There are cards remaining | Draw face-up Card
+            if(this.players[i].deck.length != 0)
+            {
+                this.playerCards[i] = this.players[i].deck.cards.pop();
+                this.warCards.push(this.playerCards[i]);
+            }
+
+            else if(this.playersCards[i].value != 0) // Needs to check if player card is face-up
+            {
+
+
+            }
+            
+        }
+
+        // To-do: Code to move cards into place.
+        
+        var highestResult = this.findHighest();
+        this.warActive = false;
+        
+        // If there is a war, sets warActive to true. Otherwise handles the appropriate player's victory.
+        if(highestResult == -1)
+            warActive = true;
+        else
+            this.handleVictory(highestResult);
     }
  }
 

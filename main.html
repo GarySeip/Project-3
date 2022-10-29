@@ -82,11 +82,12 @@
                 if(animationArray[i].animate(delta))
                     // If an animation has finished, it is removed from the array.
                     animationArray.splice(i, 1);
-            
+          /*  
             if(animationArray.length == 0)
                handleScoreLights();
-            
+          */  
             animRunning = animationArray.length != 0;
+            
         }
 
         /** 
@@ -189,9 +190,9 @@
         // delta stores the time difference between the current frame and the last frame in seconds.
         var delta;
         var players = [new Player(0), new Player(1), new Player(2)];
-        var war = new War(players);
         var animationArray = new Array();
         var deck = new Deck(width, height, depth, animationArray);
+        var war = new War(animationArray, players, deck, width, height, depth);
         // movingLight is the moving point light.
         var movingLight = new THREE.PointLight(new THREE.Color(1, 0, 1), movingLightIntensity, 0, 2);
         // movingLightOn stores whether the moving point light is on.
@@ -247,9 +248,6 @@
 
         var od = new OrbitControls(camera, renderer.domElement);
 
-        animationArray.push(new AnimationHelper(null, null, null, true, winAnimation, 
-                                                    {light: player0Light, intensity: playerLightIntensity}));
-
         function animate()
         {
             requestAnimationFrame(animate);
@@ -289,8 +287,7 @@
                 // N case advances the game.
                 case "n":
                     if(!animRunning)
-                        // war.advanceGameStep();
-                        deck.shuffle();
+                       war.advanceGameStep();
                     break;
                 // L case toggles ambient light.
                 case "l":

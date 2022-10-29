@@ -33,9 +33,15 @@
 
         this.deckRot = rotCalc * this.playerId * 2;
         this.deckPos = posCalc.clone().applyAxisAngle(axis, this.deckRot);
+        this.tempObj.rotateOnAxis(axis, this.deckRot);
+        this.deckRot = this.tempObj.rotation.clone();
+        this.tempObj.rotation.set(0, 0, 0)
 
         this.cardRot = rotCalc * (this.playerId * 2 + 1);
         this.cardPos = posCalc.applyAxisAngle(axis, this.cardRot);
+        this.tempObj.rotateOnAxis(axis, this.cardRot);
+        this.cardRot = this.tempObj.rotation.clone();
+        this.tempObj.rotation.set(0, 0, 0);
     }
 
     /**
