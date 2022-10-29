@@ -14,7 +14,18 @@
     constructor(idNum)
     {
         this.playerId = idNum;
+        this.deckPos;
+        this.deckRot;
+        this.cardPos;
+        this.cardRot;
         this.deck;
+
+        this.calcPosAndRot();
+    }
+
+    calcPosAndRot()
+    {
+        
     }
  }
 

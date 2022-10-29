@@ -170,6 +170,10 @@
         scene.add(ambientLight);
         scene.add(movingLight);
 
+        var vec = new THREE.Vector3(5, 0, 0);
+        vec.applyAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 2);
+        
+
         var od = new OrbitControls(camera, renderer.domElement);
 
         function animate()
