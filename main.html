@@ -143,7 +143,8 @@
         scene = new THREE.Scene();
 
         camera = new THREE.PerspectiveCamera(125, window.innerWidth / window.innerHeight, .1, 3000);
-        camera.position.z = baseZoom;
+        camera.position.z = baseZoom * 3;
+        camera.position.y = baseZoom * 3;
         camera.lookAt(new THREE.Vector3(0.0,0.0,0.0));
         scene.add(camera);
 
