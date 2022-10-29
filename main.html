@@ -158,6 +158,7 @@
         table.mesh.rotation.x = 3 * Math.PI / 2;
         table.mesh.position.setY(-0.01 - depth / 2);
 
+        // Creates the cards and adds them to the scene in the appropriate place.
         deck.constructCards();
         deck.spawnDeck(scene);
 
@@ -181,8 +182,7 @@
             if(true /* Render boolean */)
             {
                 // Gets the time difference between the current frame and the last frame in seconds.
-                // delta = (time - prevTime) / 1000;
-                delta = 0.015;
+                delta = (time - prevTime) / 1000;
 
                 handleAnimations();
             }
