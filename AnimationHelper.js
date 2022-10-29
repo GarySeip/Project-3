@@ -21,11 +21,15 @@
     constructor(object, endPos, endRot, useAniFunc, aniFunc, jsonData)
     {
         this.object = object;
-        // Ensures the rotations are less than tau.
-        this.object.rotation.x = this.object.rotation.x % (Math.PI * 2);
-        this.object.rotation.y = this.object.rotation.y % (Math.PI * 2);
-        this.object.rotation.z = this.object.rotation.z % (Math.PI * 2);
 
+        // Ensures the rotations are less than tau.
+        if(this.object != null)
+        {
+            this.object.rotation.x = this.object.rotation.x % (Math.PI * 2);
+            this.object.rotation.y = this.object.rotation.y % (Math.PI * 2);
+            this.object.rotation.z = this.object.rotation.z % (Math.PI * 2);
+        }
+        
         this.endPos = endPos;
 
         this.endRot = endRot;

@@ -94,7 +94,32 @@
          */
         function handleScoreLights()
         {
-            
+            var pre = playerLightIntensity * .90;
+            var post = playerLightIntensity * .10;
+
+            player0Light.intensity = pre * (players[0].deck.cards.length / 52) + post;
+            player1Light.intensity = pre * (players[1].deck.cards.length / 52) + post;
+            player2Light.intensity = pre * (players[2].deck.cards.length / 52) + post;
+
+            var toPush;
+
+            if(players[0].deck.cards.length == 52)
+               toPush = player0Light;
+            else if(players[1].deck.cards.length == 52)
+               toPush = player1Light;
+            else if(players[2].deck.cards.length == 52)
+               toPush = player2Light;
+
+            animationArray.push(new AnimationHelper(null, null, null, true, winAnimation, 
+                                                    {light: toPush, intensity: playerLightIntensity}));
+        }
+
+        /**
+         * The custom animation to signal that the a player has won the game.
+         */
+        function winAnimation(delta)
+        {
+            this.jsonData.light.intensity = this.jsonData.intensity * Math.abs(Math.cos(performance.now() / 300));
         }
 
         /**
@@ -147,7 +172,7 @@
         const ambientIntensity = 1;
         // movingLightIntensity is the intensity of the moving point light.
         const movingLightIntensity = 2;
-        const playerLightIntesnity = 5;
+        const playerLightIntensity = 5;
         // movingLightHeight is the height of the moving point light.
         const movingLightHeight = 10;
         // movingLightSpeed is the speed at which the moving point light moves.
@@ -176,9 +201,9 @@
         // ambienceOn stores if the ambient light is on.
         var ambienceOn = true;
         // The lights for each player's score.
-        var player0Light = new THREE.SpotLight(new THREE.Color(1, 1, 1), playerLightIntesnity, 0, Math.PI / 6);
-        var player1Light = new THREE.SpotLight(new THREE.Color(1, 1, 1), playerLightIntesnity, 0, Math.PI / 6);
-        var player2Light = new THREE.SpotLight(new THREE.Color(1, 1, 1), playerLightIntesnity, 0, Math.PI / 6);
+        var player0Light = new THREE.SpotLight(new THREE.Color(1, 1, 1), playerLightIntensity, 0, Math.PI / 6);
+        var player1Light = new THREE.SpotLight(new THREE.Color(1, 1, 1), playerLightIntensity, 0, Math.PI / 6);
+        var player2Light = new THREE.SpotLight(new THREE.Color(1, 1, 1), playerLightIntensity, 0, Math.PI / 6);
         // lightArray stores the lights in the scene that cast shadows. 
         var lightArray = [movingLight, player0Light, player1Light, player2Light];
         var animRunning = false;
@@ -221,6 +246,9 @@
         scene.add(player2Light);
 
         var od = new OrbitControls(camera, renderer.domElement);
+
+        animationArray.push(new AnimationHelper(null, null, null, true, winAnimation, 
+                                                    {light: player0Light, intensity: playerLightIntensity}));
 
         function animate()
         {
