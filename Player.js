@@ -19,13 +19,6 @@
         this.cardPos;
         this.cardRot;
         this.deck;
-
-        this.calcPosAndRot();
-    }
-
-    calcPosAndRot()
-    {
-        var 
     }
  }
 
