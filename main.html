@@ -84,9 +84,50 @@
                     animationArray.splice(i, 1);
             
             if(animationArray.length == 0)
-                handleScoreLights();
+               handleScoreLights();
             
             animRunning = animationArray.length != 0;
+        }
+
+        /** 
+         * This function adjusts the intensity of the score lights to reflect
+         */
+        function handleScoreLights()
+        {
+            
+        }
+
+        /**
+         * This function sets up the positions and orientations of the score lights.
+         */
+        function setUpScoreLights()
+        {
+            player0Light.translateY(movingLightHeight * 2);
+            player0Light.castShadow = true;
+            player1Light.translateY(movingLightHeight * 2);
+            player1Light.castShadow = true;
+            player2Light.translateY(movingLightHeight * 2);
+            player2Light.castShadow = true;
+
+            scene.add(player0Light.target);
+            scene.add(player1Light.target);
+            scene.add(player2Light.target);
+
+            var tarPos = players[0].deckPos.clone();
+            tarPos.applyAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 6);
+            player0Light.position.set(tarPos.x, player0Light.position.y, tarPos.z);
+            player0Light.target.translateX(tarPos.x);
+            player0Light.target.translateZ(tarPos.z);
+            
+            tarPos.applyAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI * 2 / 3);
+            player1Light.position.set(tarPos.x, player1Light.position.y, tarPos.z);
+            player1Light.target.translateX(tarPos.x);
+            player1Light.target.translateZ(tarPos.z);
+            
+            tarPos.applyAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI * 2 / 3);
+            player2Light.position.set(tarPos.x, player2Light.position.y, tarPos.z);
+            player2Light.target.translateX(tarPos.x);
+            player2Light.target.translateZ(tarPos.z);
         }
     // End Functions
     // Constants
@@ -106,7 +147,7 @@
         const ambientIntensity = 1;
         // movingLightIntensity is the intensity of the moving point light.
         const movingLightIntensity = 2;
-        const playerLightIntesnity = 10;
+        const playerLightIntesnity = 5;
         // movingLightHeight is the height of the moving point light.
         const movingLightHeight = 10;
         // movingLightSpeed is the speed at which the moving point light moves.
@@ -135,9 +176,9 @@
         // ambienceOn stores if the ambient light is on.
         var ambienceOn = true;
         // The lights for each player's score.
-        var player0Light = new THREE.SpotLight(new THREE.Color(1, 1, 1), playerLightIntesnity, 0);
-        var player1Light = new THREE.SpotLight(new THREE.Color(1, 0, 0), playerLightIntesnity, 0);
-        var player2Light = new THREE.SpotLight(new THREE.Color(0, 1, 0), playerLightIntesnity, 0);
+        var player0Light = new THREE.SpotLight(new THREE.Color(1, 1, 1), playerLightIntesnity, 0, Math.PI / 6);
+        var player1Light = new THREE.SpotLight(new THREE.Color(1, 1, 1), playerLightIntesnity, 0, Math.PI / 6);
+        var player2Light = new THREE.SpotLight(new THREE.Color(1, 1, 1), playerLightIntesnity, 0, Math.PI / 6);
         // lightArray stores the lights in the scene that cast shadows. 
         var lightArray = [movingLight, player0Light, player1Light, player2Light];
         var animRunning = false;
@@ -170,16 +211,14 @@
         movingLight.castShadow = true;
 
         // Sets up the spotlights.
-        player0Light.translateY(movingLightHeight * 2);
-        player0Light.castShadow = true;
-        player1Light.translateY(movingLightHeight * 2);
-        player1Light.castShadow = true;
-        player2Light.translateY(movingLightHeight * 2);
-        player2Light.castShadow = true;
+        setUpScoreLights();
         
         // Adds the lights to the scene.
         scene.add(ambientLight);
         scene.add(movingLight);
+        scene.add(player0Light);
+        scene.add(player1Light);
+        scene.add(player2Light);
 
         var od = new OrbitControls(camera, renderer.domElement);
 
