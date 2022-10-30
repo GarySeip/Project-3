@@ -96,21 +96,24 @@
             this.drawCards();
         else
         {
+            // If there is no war, the round count is reset.
             if(!this.warActive)
                 this.roundCount = 0;
 
+            // Says that there is no war and tat cards have not been drawn.
             this.warActive = false;
             this.cardsDrawn = false;
             
             var highestResult = this.findHighest();
             
-            // If there is a war, sets warActive to true. Otherwise handles the appropriate player's victory.
+            // If there is a war, warActive is set to true, roundCount is updated, and cards are drawn.
             if(highestResult == -1)
             {
                 this.warActive = true;
                 this.roundCount++;
                 this.advanceGameStep();
             }
+            // If there is no war handles the appropriate player's victory.
             else
                 this.handleVictory(highestResult);
         }
