@@ -82,11 +82,12 @@
                 if(animationArray[i].animate(delta))
                     // If an animation has finished, it is removed from the array.
                     animationArray.splice(i, 1);
-            
+          /*  
             if(animationArray.length == 0)
                handleScoreLights();
-            
+          */  
             animRunning = animationArray.length != 0;
+            
         }
 
         /** 
@@ -209,7 +210,7 @@
         const movingLightSpeed = 50;
     // End Constants
     // Variables
-        var scene;
+        var scene = new THREE.Scene();;
         var camera;
         var renderer;
         // prevTime stores the time the last frame was rendered.
@@ -219,9 +220,9 @@
         // delta stores the time difference between the current frame and the last frame in seconds.
         var delta;
         var players = [new Player(0), new Player(1), new Player(2)];
-        var war = new War(players);
         var animationArray = new Array();
         var deck = new Deck(width, height, depth, animationArray);
+        var war = new War(animationArray, players, deck, width, height, depth);
         // movingLight is the moving point light.
         var movingLight = new THREE.PointLight(new THREE.Color(1, 0, 1), movingLightIntensity, 0, 2);
         // movingLightOn stores whether the moving point light is on.
@@ -240,9 +241,6 @@
         var textArray = new Array(3);
         var font = (new THREE.FontLoader()).load(fontPath);
     // End Variables
-
-        scene = new THREE.Scene();
-
         camera = new THREE.PerspectiveCamera(125, window.innerWidth / window.innerHeight, .1, 3000);
         camera.position.z = baseZoom;
         camera.lookAt(new THREE.Vector3(0.0,0.0,0.0));
@@ -273,20 +271,11 @@
         // Adds the lights to the scene.
         scene.add(ambientLight);
         scene.add(movingLight);
-        scene.add(player0Light);
-        scene.add(player1Light);
-        scene.add(player2Light);
+        // scene.add(player0Light);
+        // scene.add(player1Light);
+        // scene.add(player2Light);
 
         var od = new OrbitControls(camera, renderer.domElement);
-
-        var tempArray = deck.split(3);
-        players[0].deck = new Deck(width, height, depth, animationArray);
-        players[1].deck = new Deck(width, height, depth, animationArray);
-        players[2].deck = new Deck(width, height, depth, animationArray);
-
-        players[0].deck.cards = tempArray[0];
-        players[1].deck.cards = tempArray[1];
-        players[2].deck.cards = tempArray[2];
 
         function animate()
         {
@@ -330,8 +319,7 @@
                 // N case advances the game.
                 case "n":
                     if(!animRunning)
-                        // war.advanceGameStep();
-                        deck.shuffle();
+                       war.advanceGameStep(scene);
                     break;
                 // L case toggles ambient light.
                 case "l":

@@ -22,6 +22,8 @@
         this.height = height;
         this.depth = depth;
         this.animationArray = animationArray;
+        this.deckPos = null;
+        this.deckRot = null;
 
         this.cards = new Array();
     }
@@ -144,10 +146,11 @@
      * This function splits the cards in a deck into a number of decks defined by the number of players. Each new deck
      * is equal in size. Leftover cards can remain in this deck after this function is called.
      * 
+     * @param {Scene} scene The scene of the program.
      * @param {Number} numPlayers The number of players to split the deck into.
      * @returns An array of cards composed of equal subsets of this deck. The array is equal to the size of numPlayers.
      */
-    split(numPlayers)
+    split(scene, numPlayers)
     {
         // deckSize is the number of cards to go in each new deck.
         var deckSize = Math.floor(this.cards.length / numPlayers);
@@ -159,46 +162,53 @@
         for(var i = 0; i < numPlayers; i++)
             newDecks.push(this.cards.splice(0, deckSize));
 
+        for(var i = 0; i < this.cards.length; i++)
+            scene.remove(this.cards[i].mesh);
+
         // Returns newDecks.
         return newDecks;
     }
 
     /**
-     * This function takes an array of cards to add the bottom of the deck. Also moves cards in the deck up by the 
-     * appropriate ammount.
+     * This function takes an array of cards to add the bottom of the arry then call reOrder to move all of the cards
+     * to the appropriate places.
      * 
-     * @param {[Card, Card, ...]} newCards 
+     * @param {[Card, Card, ...]} newCards An array of card objects to add to this deck.
      */
     addToBottom(newCards)
     {
-        // newPos holds the position to set a card to.
-        var newPos;
-        // newRot holds the rotation to set a card to..
-        var newRot;
-        // offset holds how much to increase a card's height.
-        var offset = newCards.length * this.depth;
+        // Updates the position of the deck of cards.
+        if(this.deckPos == null)
+            this.deckPos = this.cards[0].mesh.position.clone();
 
-        // Sets all cards already in the deck to move up and make room for new cards.
-        for(var i = 0; i < this.cards.length; i++)
-        {
-            newPos = this.cards[i].mesh.position.clone().setY(this.cards[i].mesh.position.y + offset); 
-
-            this.animationArray.push(new AnimationHelper(this.cards[i].mesh, newPos.clone(), null, false, null, null));
-        }
-        
-        // The new cards will have the same x and z coordinates but start from y = 0.
-        newPos.y = 0 - this.depth;
-        // Gets the proper orientation for the new cards.
-        newRot = this.cards[0].mesh.rotation;
+        // Updates the rotation of the deck of cards.
+        if(this.deckRot == null)
+            this.deckRot = this.cards[0].mesh.rotation.clone();
 
         // Sets all new cards to go into their appropriate position at the bottom of the deck.
         for(var i = 0; i < newCards.length; i++)
+            this.cards.unshift(newCards[i]);
+
+        this.reOrder();
+    }
+
+    /**
+     * This function moves cards into their appropriate positions based on their place in the array.
+     */
+    reOrder()
+    {
+        // newPos holds the position of the next card to be placed.
+        var newPos = this.deckPos;
+        // The cards will have the same x and z coordinates but start from y = 0.
+        newPos.y = 0 - this.depth;
+        // Gets the proper orientation for the cards.
+        var newRot = this.deckRot;
+
+        // Sets all cards to go into their appropriate position in order..
+        for(var i = 0; i < this.cards.length; i++)
         {
-            this.cards.push(newCards[i]);
-
             newPos.y += this.depth;
-
-            this.animationArray.push(new AnimationHelper(newCards[i].mesh, newPos.clone(), newRot, false, null, null));
+            this.animationArray.push(new AnimationHelper(this.cards[i].mesh, newPos.clone(), newRot, false, null, null));
         }
     }
  }
