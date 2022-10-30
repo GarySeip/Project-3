@@ -46,7 +46,7 @@
         this.jsonData = jsonData;
 
         // How fast objects move and/or rotate by default.
-        this.speedFactor = 8;
+        this.speedFactor = 2;
 
         // If an animation function is not to be used, sets up variables for use in linear movement.
         if(!useAniFunc)

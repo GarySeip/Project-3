@@ -28,20 +28,35 @@
         this.deck;
 
         var posCalc = new THREE.Vector3(0, 0, 12);
-        var axis = new THREE.Vector3(0, 1, 0);
+        // posAxis stores the axis to rotate around to determine the position.
+        var posAxis = new THREE.Vector3(0, 1, 0);
+        // rotAxis determines the axis to rotate around to determine the rotation.
+        var rotAxis = new THREE.Vector3(0, 0, 1);
         var rotCalc = Math.PI / 3;
+        var initXRot = Math.PI / 2;
+        var initZRot = Math.PI;
+        // A temporary object to apply rotations to.
+        var tempObj = new THREE.Mesh(new THREE.BufferGeometry(), THREE.MeshBasicMaterial);
+        // The rotation so that the cards are face down. The z-axis is now perpendicular to the table.
+        tempObj.rotation.set(initXRot, 0, initZRot);
 
+        // Determines the proper rotation for the deck for this player.
         this.deckRot = rotCalc * this.playerId * 2;
-        this.deckPos = posCalc.clone().applyAxisAngle(axis, this.deckRot);
-        this.tempObj.rotateOnAxis(axis, this.deckRot);
-        this.deckRot = this.tempObj.rotation.clone();
-        this.tempObj.rotation.set(0, 0, 0)
+        // Determines the deck position for this player.
+        this.deckPos = posCalc.clone().applyAxisAngle(posAxis, this.deckRot);
+        // Determines the actual Euler rotation for this player's deck.
+        tempObj.rotateOnAxis(rotAxis, -this.deckRot);
+        this.deckRot = tempObj.rotation.clone();
+        // Resets the rotation.
+        tempObj.rotation.set(initXRot, 0, initZRot);
 
+        // Determines the proper rotation for the active cards for this player.
         this.cardRot = rotCalc * (this.playerId * 2 + 1);
-        this.cardPos = posCalc.applyAxisAngle(axis, this.cardRot);
-        this.tempObj.rotateOnAxis(axis, this.cardRot);
-        this.cardRot = this.tempObj.rotation.clone();
-        this.tempObj.rotation.set(0, 0, 0);
+        // Determines the active card position for this player.
+        this.cardPos = posCalc.applyAxisAngle(posAxis, this.cardRot);
+        // Determines the actual Euler rotation for this player's active cards.
+        tempObj.rotateOnAxis(rotAxis, this.cardRot);
+        this.cardRot = tempObj.rotation.clone();
     }
 
     /**

@@ -72,13 +72,12 @@
             for(var o = 0; o < this.players.length; o++)
             {
                 var newPos = this.players[o].deckPos.clone().setY(0 - this.depth);
-                console.log("Outside");
 
                 for(var i = 0; i < this.players[o].deck.cards.length; i++)
                 {
                     newPos.y += this.depth;
-                    this.animationArray.push(new AnimationHelper(this.players[o].deck.cards[i].mesh, newPos.clone(), this.players[o].deckRot, false, null, null))
-                    console.log("Inside");
+                    this.animationArray.push(new AnimationHelper(this.players[o].deck.cards[i].mesh, newPos.clone(), 
+                                                                 this.players[o].deckRot, false, null, null));
                 }
             }
 

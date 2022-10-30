@@ -180,7 +180,7 @@
         const movingLightSpeed = 50;
     // End Constants
     // Variables
-        var scene;
+        var scene = new THREE.Scene();;
         var camera;
         var renderer;
         // prevTime stores the time the last frame was rendered.
@@ -209,9 +209,6 @@
         var lightArray = [movingLight, player0Light, player1Light, player2Light];
         var animRunning = false;
     // End Variables
-
-        scene = new THREE.Scene();
-
         camera = new THREE.PerspectiveCamera(125, window.innerWidth / window.innerHeight, .1, 3000);
         camera.position.z = baseZoom;
         camera.lookAt(new THREE.Vector3(0.0,0.0,0.0));
