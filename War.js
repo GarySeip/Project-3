@@ -11,7 +11,12 @@
     /**
      * The constructor takes in the player objects and sets up variables for War.
      * 
+     * @param {[AnimationHelper, AnimationHelper, ...]} animationArray array of AnimationHelpers.
      * @param {[Player, Player, Player]} players The array of players.
+     * @param {Deck} deck The initial deck to split between players.
+     * @param {Number} width The width of a card.
+     * @param {Number} height The height of a card.
+     * @param {Number} depth The depth of a card.
      */
     constructor(animationArray, players, deck, width, height, depth)
     {
@@ -24,26 +29,27 @@
         this.warCards = new Array();
         // players holds the array of Player objects.
         this.players = players;
-        //
+        // animationArray holds the animation array.
         this.animationArray = animationArray;
+        // deck holds the initial deck of cards.
         this.deck = deck;
         // stillIn holds which players remain in the game.
         this.stillIn = [true, true, true];
         // Boolean tracks if there is an active war.
         this.warActive = false;
-        // 
+        // How many rounds into a war it has been.
         this.roundCount = 0;
-        // 
+        // If the deck has been shuffled yet.
         this.deckShuff = false;
-        // 
+        // If each player has received their cards yet.
         this.deckSplit = false;
-        // 
+        // If the cards have been drawn this turn.
         this.cardsDrawn = false;
-        // 
+        // The width of a card.
         this.width = width;
-        // 
+        // The height of a card
         this.height = height;
-        // 
+        // The depth of a card.
         this.depth = depth;
     }
 
@@ -70,6 +76,7 @@
             this.players[1].deck.cards = deckArray[1];
             this.players[2].deck.cards = deckArray[2];
 
+            // For loops give set each card to move to the proper location.
             for(var o = 0; o < this.players.length; o++)
             {
                 var newPos = this.players[o].deckPos.clone().setY(0 - this.depth);
@@ -106,13 +113,12 @@
             }
             else
                 this.handleVictory(highestResult);
-                
         }
 
     }
 
     /**
-     * 
+     * This function handles drawing the cards for each turn.
      */
     drawCards()
     {
@@ -123,12 +129,7 @@
 
         for(var i = 0; i < this.players.length; i++)
         {
-            // rotEuler = this.players[i].cardRot.clone();
-            // rotEuler.x += flipRot;
-            // // rotEuler.y += flipRot;
-            // rotEuler.z += flipRot;
-
-            // If a war is active, draws a face down card and a face up card.
+            // If a war is active, draws a face down card and a face up card for each player.
             if(this.warActive)
             {
                 // If there are cards remaining | Draw face-down Card
@@ -159,7 +160,7 @@
                                                                  this.players[i].cardUpRot, false, null, null));
                 }
             }
-            // If a war is not active, draws a face up card.
+            // If a war is not active, draws a face up card for each player.
             else
             {
                 if(this.players[i].deck.cards.length != 0)
