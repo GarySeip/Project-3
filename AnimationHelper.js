@@ -51,7 +51,7 @@
         this.jsonData = jsonData;
 
         // How fast objects move and/or rotate by default.
-        this.speedFactor = 0.5;
+        this.speedFactor = 0.05;
 
         // If an animation function is not to be used, sets up variables for use in linear movement.
         if(!useAniFunc)
@@ -152,7 +152,7 @@
 
                 // If the rotation would rotate the object past the desired x-axis orientation, the object is set
                 // to the desired end rotation.
-                if(this.rotXSpeed > 0 && newRotX >= this.endRot.x || this.rotXSpeed < 0 && newRotX <= this.endRot.x)
+                if(this.rotXSpeed > 0 && newRotX >= this.endRot.x * .99  || this.rotXSpeed < 0 && newRotX <= this.endRot.x * 1.01)
                 {
                     newRotX = this.endRot.x;
                     this.rotXDone = true;
@@ -168,7 +168,7 @@
 
                 // If the rotation would rotate the object past the desired y-axis orientation, the object is set
                 // to the desired end rotation.
-                if(this.rotYSpeed > 0 && newRotY >= this.endRot.y || this.rotYSpeed < 0 && newRotY <= this.endRot.y)
+                if(this.rotYSpeed > 0 && newRotY >= this.endRot.y * .99  || this.rotYSpeed < 0 && newRotY <= this.endRot.y * 1.01)
                 {
                     newRotY = this.endRot.y;
                     this.rotYDone = true;
@@ -184,7 +184,7 @@
 
                 // If the rotation would rotate the object past the desired z-axis orientation, the object is set
                 // to the desired end rotation.
-                if(this.rotZSpeed > 0 && newRotZ >= this.endRot.z || this.rotZSpeed < 0 && newRotZ <= this.endRot.z)
+                if(this.rotZSpeed > 0 && newRotZ >= this.endRot.z * .99 || this.rotZSpeed < 0 && newRotZ <= this.endRot.z * 1.01)
                 {
                     newRotZ = this.endRot.z;
                     this.rotZDone = true;

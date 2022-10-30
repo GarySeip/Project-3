@@ -76,7 +76,7 @@
         var newPos = this.cardPos.clone().normalize();
 
         newPos.multiplyScalar(this.cardPos.length() + (this.deck.height / 2) * cardNum);
-        newPos.y += this.deck.depth;
+        newPos.y += this.deck.depth * cardNum;
 
         return newPos;
     }

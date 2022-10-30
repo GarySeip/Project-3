@@ -50,7 +50,7 @@
     /**
      * This function handles progressing the game forward after each press of the "n" key.
      */
-    advanceGameStep()
+    advanceGameStep(scene)
     {
         if(!this.deckShuff)
         {
@@ -59,12 +59,13 @@
         }
         else if(!this.deckSplit)
         {
-            var deckArray = this.deck.split(3);
+            var deckArray = this.deck.split(scene, 3);
 
+            // Creates the deck objects for the players.
             this.players[0].deck = new Deck(this.width, this.height, this.depth, this.animationArray); 
             this.players[1].deck = new Deck(this.width, this.height, this.depth, this.animationArray); 
             this.players[2].deck = new Deck(this.width, this.height, this.depth, this.animationArray); 
-            
+            // Sets the actual cards in each deck to what was split off.
             this.players[0].deck.cards = deckArray[0];
             this.players[1].deck.cards = deckArray[1];
             this.players[2].deck.cards = deckArray[2];
@@ -131,9 +132,9 @@
             if(this.warActive)
             {
                 // If there are cards remaining | Draw face-down Card
-                if(this.players[i].deck.length != 0)
+                if(this.players[i].deck.cards.length != 0)
                 {
-                    this.playerCards[i] = this.players[i].deck.cards.shift();
+                    this.playerCards[i] = this.players[i].deck.cards.pop();
                     this.warCards.push(this.playerCards[i]);
 
                     this.animationArray.push(new AnimationHelper(this.playerCards[i].mesh, 
@@ -142,9 +143,9 @@
                 }
 
                 // If There are cards remaining | Draw face-up Card
-                if(this.players[i].deck.length != 0)
+                if(this.players[i].deck.cards.length != 0)
                 {
-                    this.playerCards[i] = this.players[i].deck.cards.shift();
+                    this.playerCards[i] = this.players[i].deck.cards.pop();
                     this.warCards.push(this.playerCards[i]);
 
                     this.animationArray.push(new AnimationHelper(this.playerCards[i].mesh,
@@ -161,9 +162,9 @@
             // If a war is not active, draws a face up card.
             else
             {
-                if(this.players[i].deck.length != 0)
+                if(this.players[i].deck.cards.length != 0)
                 {
-                    this.playerCards[i] = this.players[i].deck.cards.shift();
+                    this.playerCards[i] = this.players[i].deck.cards.pop();
                     this.warCards.push(this.playerCards[i]);
                     
                     this.animationArray.push(new AnimationHelper(this.playerCards[i].mesh, this.players[i].cardPos, 
