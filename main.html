@@ -31,7 +31,7 @@
          * This project requires that it be run on a server to avoid violating CORS policy.
          **/
         import * as THREE from "http://cs.merrimack.edu/~stuetzlec/three.js-master/build/three.module.js";
-        import { OrbitControls } from "http://cs.merrimack.edu/~stuetzlec/three.js-master/examples/jsm/controls/OrbitControls.js"
+        import { FontLoader } from "http://cs.merrimack.edu/~stuetzlec/three.js-master/src/loaders/FontLoader.js"
         import { Card } from "./Card.js";
         import { Deck } from "./Deck.js";
         import { Player } from "./Player.js";
@@ -82,10 +82,10 @@
                 if(animationArray[i].animate(delta))
                     // If an animation has finished, it is removed from the array.
                     animationArray.splice(i, 1);
-          /*  
-            if(animationArray.length == 0)
+            
+            if(animationArray.length == 0 && war.deckSplit)
                handleScoreLights();
-          */  
+            
             animRunning = animationArray.length != 0;
             
         }
@@ -98,21 +98,47 @@
             var pre = playerLightIntensity * .90;
             var post = playerLightIntensity * .10;
 
-            player0Light.intensity = pre * (players[0].deck.cards.length / 52) + post;
-            player1Light.intensity = pre * (players[1].deck.cards.length / 52) + post;
-            player2Light.intensity = pre * (players[2].deck.cards.length / 52) + post;
+            if(players[0].deck.cards.length != 0 || war.playerCards[0].value != 0)
+                player0Light.intensity = pre * (players[0].deck.cards.length / 52) + post;
+            else
+                player0Light.intensity = 0;
+
+            if(players[1].deck.cards.length != 0 || war.playerCards[1   ].value != 0)
+                player1Light.intensity = pre * (players[1].deck.cards.length / 52) + post;
+            else
+                player1Light.intensity = 0;
+            
+            if(players[2].deck.cards.length != 0 || war.playerCards[2].value != 0)
+                player2Light.intensity = pre * (players[2].deck.cards.length / 52) + post;
+            else
+                player2Light.intensity = 0;
 
             var toPush;
 
-            if(players[0].deck.cards.length == 52)
-               toPush = player0Light;
-            else if(players[1].deck.cards.length == 52)
-               toPush = player1Light;
-            else if(players[2].deck.cards.length == 52)
-               toPush = player2Light;
+            if(war.winnerID != -1)
+            {
+                if(war.winnerID == 0)
+                {
+                    toPush = player0Light;
+                    player1Light.intensity = 0;
+                    player2Light.intensity = 0;
+                }
+                else if(war.winnerID == 1)
+                {
+                    toPush = player1Light;
+                    player0Light.intensity = 0;
+                    player2Light.intensity = 0;
+                }
+                else if(war.winnerID == 2)
+                {
+                    toPush = player2Light;
+                    player0Light.intensity = 0;
+                    player1Light.intensity = 0;
+                }
 
-            // animationArray.push(new AnimationHelper(null, null, null, true, winAnimation, 
-            //                                         {light: toPush, intensity: playerLightIntensity}));
+                animationArray.push(new AnimationHelper(null, null, null, true, winAnimation, 
+                                                        {light: toPush, intensity: playerLightIntensity}));
+            }
         }
 
         /**
@@ -156,24 +182,22 @@
             player2Light.target.translateZ(tarPos.z);
         }
 
+        /**
+         * 
+         */
         function setUpDeckDisplays()
         {
             for(var i = 0; i < textArray.length; i++)
                 scene.remove(textArray[i]);
             
+            textArray = new Array();
             var newTextGeo;
             var textMaterial = new THREE.MeshBasicMaterial();
             var newText;
 
             for(var i = 0; i < players.length; i++)
             {
-                newTextGeo = new THREE.TextGeometry(
-                    players[i].deck.cards.length, 
-                    {
-                        font: font,
-                        size: 10,
-                        height: width
-                    });
+                newTextGeo = new THREE.TextGeometry(players[i].deck.cards.length, {font: theFont, size: 10, height: width});
                 newText = new THREE.Mesh(newTextGeo, textMaterial);
 
                 scene.add(newText);
@@ -183,11 +207,44 @@
                 newText.translateY(width * 2);
             }
         }
+
+        /**
+         * This function toggles if the ambient light is on.
+         */
+        function toggleAmbience()
+        {
+            if(ambienceOn)
+            {
+                ambientLight.intensity = 0;
+                ambienceOn = false;
+            }
+            else
+            {
+                ambientLight.intensity = ambientIntensity;
+                ambienceOn = true;
+            }
+        }
+
+        /**
+         * This function toggles if the moving light is on.
+         */
+        function toggleMoving()
+        {   
+            if(movingLightOn)
+            {
+                movingLight.intensity = 0;
+                movingLightOn = false;
+            }
+            else
+            {
+                movingLight.intensity = movingLightIntensity;
+                movingLightOn = true;
+            }
+        }
     // End Functions
     // Constants
         // The colors for the puzzle.
         const backgroundColor = [0, 0, 0];
-        const baseZoom = 6;
         // 655 and 930 are respectively the width and height of the card images.
         const width = 655 / 200;
         const height = 930 / 200;
@@ -203,7 +260,7 @@
         const ambientIntensity = 1;
         // movingLightIntensity is the intensity of the moving point light.
         const movingLightIntensity = 2;
-        const playerLightIntensity = 5;
+        const playerLightIntensity = 3;
         // movingLightHeight is the height of the moving point light.
         const movingLightHeight = 10;
         // movingLightSpeed is the speed at which the moving point light moves.
@@ -219,30 +276,35 @@
         var time;
         // delta stores the time difference between the current frame and the last frame in seconds.
         var delta;
+        // Multiplies delta to increase speed.
+        var speedMult = 1;
         var players = [new Player(0), new Player(1), new Player(2)];
         var animationArray = new Array();
         var deck = new Deck(width, height, depth, animationArray);
         var war = new War(animationArray, players, deck, width, height, depth);
         // movingLight is the moving point light.
-        var movingLight = new THREE.PointLight(new THREE.Color(1, 0, 1), movingLightIntensity, 0, 2);
+        var movingLight = new THREE.PointLight(new THREE.Color(1, 0, 1), 0, 0, 2);
         // movingLightOn stores whether the moving point light is on.
-        var movingLightOn = true;
+        var movingLightOn = false;
         // ambientLight is the ambient light.
         var ambientLight = new THREE.AmbientLight(new THREE.Color(1, 1, 1), ambientIntensity);
         // ambienceOn stores if the ambient light is on.
         var ambienceOn = true;
+        // ambienceInitDisable stores if the ambience has been disables after the score lights are turned on.
+        var ambienceInitDisable = false;
         // The lights for each player's score.
-        var player0Light = new THREE.SpotLight(new THREE.Color(1, 1, 1), playerLightIntensity, 0, Math.PI / 6);
-        var player1Light = new THREE.SpotLight(new THREE.Color(1, 1, 1), playerLightIntensity, 0, Math.PI / 6);
-        var player2Light = new THREE.SpotLight(new THREE.Color(1, 1, 1), playerLightIntensity, 0, Math.PI / 6);
+        var player0Light = new THREE.SpotLight(new THREE.Color(1, 1, 1), 0, 0, Math.PI / 6);
+        var player1Light = new THREE.SpotLight(new THREE.Color(1, 1, 1), 0, 0, Math.PI / 6);
+        var player2Light = new THREE.SpotLight(new THREE.Color(1, 1, 1), 0, 0, Math.PI / 6);
         // lightArray stores the lights in the scene that cast shadows. 
         var lightArray = [movingLight, player0Light, player1Light, player2Light];
         var animRunning = false;
         var textArray = new Array(3);
-        var font = (new THREE.FontLoader()).load(fontPath);
+        var theFont;
     // End Variables
-        camera = new THREE.PerspectiveCamera(125, window.innerWidth / window.innerHeight, .1, 3000);
-        camera.position.z = baseZoom;
+        camera = new THREE.PerspectiveCamera(83, window.innerWidth / window.innerHeight, .1, 3000);
+        // Camera position determined useing OrbitControls.
+        camera.position.set(-6.4726, 16.1925, 10.7803);
         camera.lookAt(new THREE.Vector3(0.0,0.0,0.0));
         scene.add(camera);
 
@@ -271,11 +333,35 @@
         // Adds the lights to the scene.
         scene.add(ambientLight);
         scene.add(movingLight);
-        // scene.add(player0Light);
-        // scene.add(player1Light);
-        // scene.add(player2Light);
+        scene.add(player0Light);
+        scene.add(player1Light);
+        scene.add(player2Light);
 
-        var od = new OrbitControls(camera, renderer.domElement);
+        // Loads the font.
+        // Code taken and modified from https://threejs.org/docs/#examples/en/loaders/FontLoader.
+        (new FontLoader()).load(
+            // resource URL
+            fontPath,
+
+            // onLoad callback
+            function ( font ) 
+            {
+                // do something with the font
+                theFont = font;
+            },
+
+            // onProgress callback
+            function ( xhr ) 
+            {
+                console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
+            },
+
+            // onError callback
+            function ( err ) 
+            {
+                console.log( 'An error happened' );
+            }
+        );
 
         function animate()
         {
@@ -284,19 +370,19 @@
             // Gets the current time.
             time = performance.now();
 
-            if(true /* Render boolean */)
+            // Gets the time difference between the current frame and the last frame in seconds.
+            delta = speedMult * (time - prevTime) / 1000;
+                
+            handleAnimations();
+
+            // Toggles the ambience after the decks are split.
+            if(war.deckSplit && !ambienceInitDisable && !animRunning)
             {
-                // Gets the time difference between the current frame and the last frame in seconds.
-                delta = (time - prevTime) / 1000;
+                ambienceInitDisable = true;
 
-                if(animationArray.length == 0 && war.deckSplit)
-                    setUpDeckDisplays();
-                    
-                handleAnimations();
+                if(ambienceOn)
+                    toggleAmbience();
             }
-
-            // Outputs the camera's position so that OrbitControls can be used to find a good camera angle.
-            // console.log(camera.position.toArray());
 
             // Updates when the previous frame was rendered.
             prevTime = time;
@@ -319,33 +405,26 @@
                 // N case advances the game.
                 case "n":
                     if(!animRunning)
-                       war.advanceGameStep(scene);
+                    {
+                        war.advanceGameStep(scene);
+                        if(!animRunning && war.deckSplit)
+                            setUpDeckDisplays();
+                    }
                     break;
                 // L case toggles ambient light.
                 case "l":
-                    if(ambienceOn)
-                    {
-                        ambientLight.intensity = 0;
-                        ambienceOn = false;
-                    }
-                    else
-                    {
-                        ambientLight.intensity = ambientIntensity;
-                        ambienceOn = true;
-                    }
+                    toggleAmbience();
                     break;
                 // P case toggles moveable point light.
                 case "p":
-                    if(movingLightOn)
-                    {
-                        movingLight.intensity = 0;
-                        movingLightOn = false;
-                    }
+                    toggleMoving();
+                    break;
+                // H case enters hyper mode.
+                case "h":
+                    if(speedMult == 1)
+                        speedMult = 10;
                     else
-                    {
-                        movingLight.intensity = movingLightIntensity;
-                        movingLightOn = true;
-                    }
+                        speedMult = 1;
                     break;
                 // M case toggles shadows.
                 case "m":

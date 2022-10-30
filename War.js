@@ -37,6 +37,8 @@
         this.stillIn = [true, true, true];
         // Boolean tracks if there is an active war.
         this.warActive = false;
+        // winnerID records the id of the winning player..
+        this.winnerID = -1;
         // How many rounds into a war it has been.
         this.roundCount = 0;
         // If the deck has been shuffled yet.
@@ -94,7 +96,7 @@
         }
         else if(!this.cardsDrawn)
             this.drawCards();
-        else
+        else if(this.winnerID == -1)
         {
             // If there is no war, the round count is reset.
             if(!this.warActive)
@@ -230,6 +232,12 @@
 
         // Resets the warCards arrays.
         this.warCards = new Array();
+
+        // Handles if the player has won the game.
+        if(this.players[playerId].deck.cards.length == this.players[0].deck.cards.length
+                                                     + this.players[1].deck.cards.length
+                                                     + this.players[2].deck.cards.length)
+            this.winnerID = playerId;
     }
  }
 
