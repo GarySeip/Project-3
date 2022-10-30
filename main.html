@@ -300,7 +300,9 @@
                 // Gets the time difference between the current frame and the last frame in seconds.
                 delta = (time - prevTime) / 1000;
 
-                setUpDeckDisplays();
+                if(animationArray.length == 0 && war.deckSplit)
+                    setUpDeckDisplays();
+                    
                 handleAnimations();
             }
 
