@@ -33,15 +33,17 @@
         this.warActive = false;
         // 
         this.roundCount = 0;
-        //
+        // 
         this.deckShuff = false;
-        //
+        // 
         this.deckSplit = false;
-        //
+        // 
+        this.cardsDrawn = false;
+        // 
         this.width = width;
-        //
+        // 
         this.height = height;
-        //
+        // 
         this.depth = depth;
     }
 
@@ -50,9 +52,7 @@
      */
     advanceGameStep()
     {
-        if(this.warActive)
-            this.doWar();
-        else if(!this.deckShuff)
+        if(!this.deckShuff)
         {
             this.deck.shuffle();
             this.deckShuff = true;
@@ -84,17 +84,90 @@
             this.deckSplit = true;
             
         }
+        else if(!this.cardsDrawn)
+            this.drawCards();
         else
         {
-            this.roundCount = 0;
-            // Gets the top card of each player's deck.
-            // There needs to be different code for updating the cards during a war.
-            for(var i = 0; i < this.players.length; i++)
+            if(!this.warActive)
+                this.roundCount = 0;
+
+            this.warActive = false;
+            this.cardsDrawn = false;
+            
+            var highestResult = this.findHighest();
+            
+            // If there is a war, sets warActive to true. Otherwise handles the appropriate player's victory.
+            if(highestResult == -1)
+            {
+                this.warActive = true;
+                this.roundCount++;
+                this.advanceGameStep();
+            }
+            else
+                this.handleVictory(highestResult);
+                
+        }
+
+    }
+
+    /**
+     * 
+     */
+    drawCards()
+    {
+        // flipRot is the amount to rotate cards to flip them over.
+        var flipRot = Math.PI;
+        // rotEuler will store the Euler to flip cards over.
+        var rotEuler;
+
+        for(var i = 0; i < this.players.length; i++)
+        {
+            // rotEuler = this.players[i].cardRot.clone();
+            // rotEuler.x += flipRot;
+            // // rotEuler.y += flipRot;
+            // rotEuler.z += flipRot;
+
+            // If a war is active, draws a face down card and a face up card.
+            if(this.warActive)
+            {
+                // If there are cards remaining | Draw face-down Card
+                if(this.players[i].deck.length != 0)
+                {
+                    this.playerCards[i] = this.players[i].deck.cards.shift();
+                    this.warCards.push(this.playerCards[i]);
+
+                    this.animationArray.push(new AnimationHelper(this.playerCards[i].mesh, 
+                                                                 this.players[i].calcCardPos(this.roundCount * 2 - 1), 
+                                                                 this.players[i].cardDownRot, false, null, null));
+                }
+
+                // If There are cards remaining | Draw face-up Card
+                if(this.players[i].deck.length != 0)
+                {
+                    this.playerCards[i] = this.players[i].deck.cards.shift();
+                    this.warCards.push(this.playerCards[i]);
+
+                    this.animationArray.push(new AnimationHelper(this.playerCards[i].mesh,
+                                                                 this.players[i].calcCardPos(this.roundCount * 2),
+                                                                 this.players[i].cardUpRot, false, null, null));
+                }
+                // Needs to check if player card is face-up
+                else if(this.playerCards[i].value != 0 && !this.playerCards[i].mesh.rotation.equals(this.players[i].cardUpRot))
+                {
+                    this.animationArray.push(new AnimationHelper(this.playerCards[i].mesh, null, 
+                                                                 this.players[i].cardUpRot, false, null, null));
+                }
+            }
+            // If a war is not active, draws a face up card.
+            else
             {
                 if(this.players[i].deck.length != 0)
                 {
-                    this.playerCards[i] = this.players[i].deck.cards.pop();
+                    this.playerCards[i] = this.players[i].deck.cards.shift();
                     this.warCards.push(this.playerCards[i]);
+                    
+                    this.animationArray.push(new AnimationHelper(this.playerCards[i].mesh, this.players[i].cardPos, 
+                                                                 this.players[i].cardUpRot, false, null, null));
                 }
                 else if(this.stillIn[i])
                 {
@@ -103,19 +176,9 @@
                 }
                 
             }
-
-            // To-do: Code to move cards into place.
-            
-            var highestResult = this.findHighest();
-            
-            // If there is a war, sets warActive to true. Otherwise handles the appropriate player's victory.
-            if(highestResult == -1)
-                warActive = true;
-            else
-                this.handleVictory(highestResult);
-                
         }
 
+        this.cardsDrawn = true;
     }
 
     /**
@@ -162,50 +225,6 @@
 
         // Resets the warCards arrays.
         this.warCards = new Array();
-    }
-
-    /**
-     * This function handles an occurence of War.
-     */
-    doWar()
-    {
-        this.roundCount++;
-        // Gets the top card of each player's deck.
-        // There needs to be different code for updating the cards during a war.
-        for(var i = 0; i < this.players.length; i++)
-        {
-            // If there are cards remaining | Draw face-down Card
-            if(this.players[i].deck.length != 0)
-            {
-                this.playerCards[i] = this.players[i].deck.cards.pop();
-                this.warCards.push(this.playerCards[i]);
-            }
-
-            // If There are cards remaining | Draw face-up Card
-            if(this.players[i].deck.length != 0)
-            {
-                this.playerCards[i] = this.players[i].deck.cards.pop();
-                this.warCards.push(this.playerCards[i]);
-            }
-
-            else if(this.playersCards[i].value != 0) // Needs to check if player card is face-up
-            {
-
-
-            }
-            
-        }
-
-        // To-do: Code to move cards into place.
-        
-        var highestResult = this.findHighest();
-        this.warActive = false;
-        
-        // If there is a war, sets warActive to true. Otherwise handles the appropriate player's victory.
-        if(highestResult == -1)
-            warActive = true;
-        else
-            this.handleVictory(highestResult);
     }
  }
 

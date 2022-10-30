@@ -33,12 +33,17 @@
         this.endPos = endPos;
 
         this.endRot = endRot;
-        // Ensures the desired end rotation is less than tau.
+
+        if(endRot == undefined || endRot == NaN)
+            console.log();
+
+        // Modulus ensures the desired end rotation is less than tau.
+        // toFixed operation works to prevent infinite loops due to rotations being just barely off.
         if(endRot != null)
         {
-            this.endRot.x = this.endRot.x % (Math.PI * 2);
-            this.endRot.y = this.endRot.y % (Math.PI * 2);
-            this.endRot.z = this.endRot.z % (Math.PI * 2);
+            this.endRot.x = Number.parseFloat(this.endRot.x % (Math.PI * 2)).toFixed(5);
+            this.endRot.y = Number.parseFloat(this.endRot.y % (Math.PI * 2)).toFixed(5);
+            this.endRot.z = Number.parseFloat(this.endRot.z % (Math.PI * 2)).toFixed(5);
         }
         // Records if this isntance is to use an animation function.
         this.useAniFunc = useAniFunc;
@@ -46,7 +51,7 @@
         this.jsonData = jsonData;
 
         // How fast objects move and/or rotate by default.
-        this.speedFactor = 2;
+        this.speedFactor = 0.5;
 
         // If an animation function is not to be used, sets up variables for use in linear movement.
         if(!useAniFunc)
@@ -67,9 +72,9 @@
             // If the object is not already in the appropriate location and orientation, these variables
             // record if the movement and rotation are done.
             this.moveDone = endPos == null || this.moveSpeed == 0;
-            this.rotXDone = endRot == null || this.object.rotation.x == endRot.x;
-            this.rotYDone = endRot == null || this.object.rotation.y == endRot.y;
-            this.rotZDone = endRot == null || this.object.rotation.z == endRot.z;
+            this.rotXDone = endRot == null || endRot == undefined || endRot == NaN || this.object.rotation.x == endRot.x;
+            this.rotYDone = endRot == null || endRot == undefined || endRot == NaN || this.object.rotation.y == endRot.y;
+            this.rotZDone = endRot == null || endRot == undefined || endRot == NaN || this.object.rotation.z == endRot.z;
 
             // Gets the appropriate rotation speed in the appropriate direction for the x axis.
             if(!this.rotXDone)
@@ -147,7 +152,7 @@
 
                 // If the rotation would rotate the object past the desired x-axis orientation, the object is set
                 // to the desired end rotation.
-                if(this.rotXSpeed > 0 && newRotX > this.endRot.x || this.rotXSpeed < 0 && newRotX < this.endRot.x)
+                if(this.rotXSpeed > 0 && newRotX >= this.endRot.x || this.rotXSpeed < 0 && newRotX <= this.endRot.x)
                 {
                     newRotX = this.endRot.x;
                     this.rotXDone = true;
@@ -163,7 +168,7 @@
 
                 // If the rotation would rotate the object past the desired y-axis orientation, the object is set
                 // to the desired end rotation.
-                if(this.rotYSpeed > 0 && newRotY > this.endRot.y || this.rotYSpeed < 0 && newRotY < this.endRot.y)
+                if(this.rotYSpeed > 0 && newRotY >= this.endRot.y || this.rotYSpeed < 0 && newRotY <= this.endRot.y)
                 {
                     newRotY = this.endRot.y;
                     this.rotYDone = true;
@@ -179,7 +184,7 @@
 
                 // If the rotation would rotate the object past the desired z-axis orientation, the object is set
                 // to the desired end rotation.
-                if(this.rotZSpeed > 0 && newRotZ > this.endRot.z || this.rotZSpeed < 0 && newRotZ < this.endRot.z)
+                if(this.rotZSpeed > 0 && newRotZ >= this.endRot.z || this.rotZSpeed < 0 && newRotZ <= this.endRot.z)
                 {
                     newRotZ = this.endRot.z;
                     this.rotZDone = true;

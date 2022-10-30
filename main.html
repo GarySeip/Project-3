@@ -239,9 +239,9 @@
         // Adds the lights to the scene.
         scene.add(ambientLight);
         scene.add(movingLight);
-        scene.add(player0Light);
-        scene.add(player1Light);
-        scene.add(player2Light);
+        // scene.add(player0Light);
+        // scene.add(player1Light);
+        // scene.add(player2Light);
 
         var od = new OrbitControls(camera, renderer.domElement);
 
@@ -255,7 +255,8 @@
             if(true /* Render boolean */)
             {
                 // Gets the time difference between the current frame and the last frame in seconds.
-                delta = (time - prevTime) / 1000;
+                // delta = (time - prevTime) / 1000;
+                delta = 0.015;
 
                 handleAnimations();
             }
