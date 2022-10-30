@@ -110,8 +110,8 @@
             else if(players[2].deck.cards.length == 52)
                toPush = player2Light;
 
-            animationArray.push(new AnimationHelper(null, null, null, true, winAnimation, 
-                                                    {light: toPush, intensity: playerLightIntensity}));
+            // animationArray.push(new AnimationHelper(null, null, null, true, winAnimation, 
+            //                                         {light: toPush, intensity: playerLightIntensity}));
         }
 
         /**
@@ -154,6 +154,34 @@
             player2Light.target.translateX(tarPos.x);
             player2Light.target.translateZ(tarPos.z);
         }
+
+        function setUpDeckDisplays()
+        {
+            for(var i = 0; i < textArray.length; i++)
+                scene.remove(textArray[i]);
+            
+            var newTextGeo;
+            var textMaterial = new THREE.MeshBasicMaterial();
+            var newText;
+
+            for(var i = 0; i < players.length; i++)
+            {
+                newTextGeo = new THREE.TextGeometry(
+                    players[i].deck.cards.length, 
+                    {
+                        font: font,
+                        size: 10,
+                        height: width
+                    });
+                newText = new THREE.Mesh(newTextGeo, textMaterial);
+
+                scene.add(newText);
+                textArray.push(newText);
+
+                newText.translateOnAxis(players[i].deckPos.clone().normalize(), players[i].deckPos.length());
+                newText.translateY(width * 2);
+            }
+        }
     // End Functions
     // Constants
         // The colors for the puzzle.
@@ -168,6 +196,8 @@
         const woodTable = "./Textures/table.jpg";
         const merriTable = "./Textures/merriTable.jpg";
         const merriTableFelt = "./Textures/merriTable.png";
+        // fontPath stores the path to a font.
+        const fontPath = "http://cs.merrimack.edu/~stuetzlec/three.js-master/examples/fonts/gentilis_bold.typeface.json";
         // ambientInensity is the intensity of the ambient light.
         const ambientIntensity = 1;
         // movingLightIntensity is the intensity of the moving point light.
@@ -207,6 +237,8 @@
         // lightArray stores the lights in the scene that cast shadows. 
         var lightArray = [movingLight, player0Light, player1Light, player2Light];
         var animRunning = false;
+        var textArray = new Array(3);
+        var font = (new THREE.FontLoader()).load(fontPath);
     // End Variables
 
         scene = new THREE.Scene();
@@ -247,8 +279,14 @@
 
         var od = new OrbitControls(camera, renderer.domElement);
 
-        animationArray.push(new AnimationHelper(null, null, null, true, winAnimation, 
-                                                    {light: player0Light, intensity: playerLightIntensity}));
+        var tempArray = deck.split(3);
+        players[0].deck = new Deck(width, height, depth, animationArray);
+        players[1].deck = new Deck(width, height, depth, animationArray);
+        players[2].deck = new Deck(width, height, depth, animationArray);
+
+        players[0].deck.cards = tempArray[0];
+        players[1].deck.cards = tempArray[1];
+        players[2].deck.cards = tempArray[2];
 
         function animate()
         {
@@ -262,6 +300,7 @@
                 // Gets the time difference between the current frame and the last frame in seconds.
                 delta = (time - prevTime) / 1000;
 
+                setUpDeckDisplays();
                 handleAnimations();
             }
 
