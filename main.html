@@ -9,15 +9,16 @@
             the scene, the camera, and the animation loop. It also sets up several of the basic components such as
             the table and lighting.
 
-            For our above and beyond, we !!!!!!!!!!!!!!!!!!!!!!!!!
-                                         !!!!!!!!!!!!!!!!!!!!!!!!!
-                                         !!!!!!!!!!!!!!!!!!!!!!!!!
-                                         !!!!!!!!!!!!!!!!!!!!!!!!!
-                                         !!!!!! UPDATE THIS !!!!!!
-                                         !!!!!!!!!!!!!!!!!!!!!!!!!
-                                         !!!!!!!!!!!!!!!!!!!!!!!!!
-                                         !!!!!!!!!!!!!!!!!!!!!!!!!
-                                         !!!!!!!!!!!!!!!!!!!!!!!!!
+            For our above and beyond, we implemented lights which dynamically change in brightness depending on who is
+            winning. When a player wins, their light will flash on and off. There are also toggleable text displays above 
+            each play area informing the viewer of each player's deck sizes.
+
+            !! Do not hold N while the text displays are on. !!
+            It causes improper object movement and can freeze the program.
+
+            Non Project Standard controls:
+            T - Toggles the visibility of the text displays.
+            H - Toggles hyper mode. A dramatic way of saying you can multiply the game speed by ten.
         -->
     </head>
     <body>
@@ -95,28 +96,35 @@
          */
         function handleScoreLights()
         {
+            // These variables make it so that the lights are not at full or minimal intensity until
+            // a player wins or is disqualified.
             var pre = playerLightIntensity * .90;
             var post = playerLightIntensity * .10;
 
+            // Sets the appropriate intensity for player 0's light.
             if(players[0].deck.cards.length != 0 || war.playerCards[0].value != 0)
                 player0Light.intensity = pre * (players[0].deck.cards.length / 52) + post;
             else
                 player0Light.intensity = 0;
 
+            // Sets the appropriate intensity for player 1's light.
             if(players[1].deck.cards.length != 0 || war.playerCards[1   ].value != 0)
                 player1Light.intensity = pre * (players[1].deck.cards.length / 52) + post;
             else
                 player1Light.intensity = 0;
             
+            // Sets the appropriate intensity for player 2's light.
             if(players[2].deck.cards.length != 0 || war.playerCards[2].value != 0)
                 player2Light.intensity = pre * (players[2].deck.cards.length / 52) + post;
             else
                 player2Light.intensity = 0;
 
+            // toPush holds the light to push to the winning animation.
             var toPush;
 
             if(war.winnerID != -1)
             {
+                // Depending on the winner, updates toPush and sets the lights of the losers to 0 intensity.
                 if(war.winnerID == 0)
                 {
                     toPush = player0Light;
@@ -136,6 +144,7 @@
                     player1Light.intensity = 0;
                 }
 
+                // Pushes the win animation to the animation helper.
                 animationArray.push(new AnimationHelper(null, null, null, true, winAnimation, 
                                                         {light: toPush, intensity: playerLightIntensity}));
             }
@@ -154,6 +163,7 @@
          */
         function setUpScoreLights()
         {
+            // Moves each player's light to the appropriate height and sets them to cast shadows.
             player0Light.translateY(movingLightHeight * 2);
             player0Light.castShadow = true;
             player1Light.translateY(movingLightHeight * 2);
@@ -161,21 +171,25 @@
             player2Light.translateY(movingLightHeight * 2);
             player2Light.castShadow = true;
 
+            // Adds the light targets to the scene to update their world matrices.
             scene.add(player0Light.target);
             scene.add(player1Light.target);
             scene.add(player2Light.target);
 
+            // Positions player 0's light.
             var tarPos = players[0].deckPos.clone();
             tarPos.applyAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 6);
             player0Light.position.set(tarPos.x, player0Light.position.y, tarPos.z);
             player0Light.target.translateX(tarPos.x);
             player0Light.target.translateZ(tarPos.z);
             
+            // Positions player 1's light.
             tarPos.applyAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI * 2 / 3);
             player1Light.position.set(tarPos.x, player1Light.position.y, tarPos.z);
             player1Light.target.translateX(tarPos.x);
             player1Light.target.translateZ(tarPos.z);
             
+            // Positions player 2's light.
             tarPos.applyAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI * 2 / 3);
             player2Light.position.set(tarPos.x, player2Light.position.y, tarPos.z);
             player2Light.target.translateX(tarPos.x);
@@ -183,28 +197,75 @@
         }
 
         /**
-         * 
+         * This function loads the font for the deck displays and calls scopeHack with it.
+         * This was implemented for above and beyond.
          */
         function setUpDeckDisplays()
         {
-            for(var i = 0; i < textArray.length; i++)
-                scene.remove(textArray[i]);
-            
+            if(war.deckSplit && textOn)
+            {
+                for(var i = 0; i < textArray.length; i++)
+                    scene.remove(textArray[i]);
+                
+                textArray = new Array();
+
+                var loader = new FontLoader();
+
+                loader.load(fontPath, function(response)
+                {
+                    scopeHack(response)
+                });
+            }
+        }
+
+        /**
+         * This function serves to set up the deck text displays to the viewer.
+         */
+        function scopeHack(theFont)
+        {            
             textArray = new Array();
+            // newTextGeo holds the TextGeometry.
             var newTextGeo;
-            var textMaterial = new THREE.MeshBasicMaterial();
+            // textMaterial is the material for the text.
+            // It is not affected by lighting on purpose.
+            var textMaterial = new THREE.MeshBasicMaterial({color: new THREE.Color(1, 1, 1)});
+            // newText will hold the text mesh.
             var newText;
+            // textNum will hold the number to display.
+            var textNum;
+            // location is used to help calculate the position of the text.
+            var location;
 
             for(var i = 0; i < players.length; i++)
             {
-                newTextGeo = new THREE.TextGeometry(players[i].deck.cards.length, {font: theFont, size: 10, height: width});
+                textNum = Number(players[i].deck.cards.length).toString();
+
+                console.log();
+
+                newTextGeo = new THREE.TextGeometry(textNum, 
+                {
+                    font: theFont, 
+                    size: width, 
+                    height: depth
+                });
+
+                // Centers the text.
+                newTextGeo.center();
+                
+                // Creates the text.
                 newText = new THREE.Mesh(newTextGeo, textMaterial);
 
+                // Adds the text to the appropriate places.
                 scene.add(newText);
                 textArray.push(newText);
 
-                newText.translateOnAxis(players[i].deckPos.clone().normalize(), players[i].deckPos.length());
+                location = players[i].deckPos.clone().sub(players[i].cardPos);
+
+                // Moves each display into the appropriate position.
+                newText.translateOnAxis(players[i].cardPos.clone().normalize(), players[i].deckPos.length());
+                newText.translateOnAxis(location.clone().normalize(), location.length() / 2);
                 newText.translateY(width * 2);
+                newText.lookAt(camera.position);
             }
         }
 
@@ -255,7 +316,7 @@
         const merriTable = "./Textures/merriTable.jpg";
         const merriTableFelt = "./Textures/merriTable.png";
         // fontPath stores the path to a font.
-        const fontPath = "http://cs.merrimack.edu/~stuetzlec/three.js-master/examples/fonts/gentilis_bold.typeface.json";
+        const fontPath = "./gentilis_bold.typeface.json";
         // ambientInensity is the intensity of the ambient light.
         const ambientIntensity = 1;
         // movingLightIntensity is the intensity of the moving point light.
@@ -299,8 +360,8 @@
         // lightArray stores the lights in the scene that cast shadows. 
         var lightArray = [movingLight, player0Light, player1Light, player2Light];
         var animRunning = false;
-        var textArray = new Array(3);
-        var theFont;
+        var textArray = new Array();
+        var textOn = true;
     // End Variables
         camera = new THREE.PerspectiveCamera(83, window.innerWidth / window.innerHeight, .1, 3000);
         // Camera position determined useing OrbitControls.
@@ -336,32 +397,6 @@
         scene.add(player0Light);
         scene.add(player1Light);
         scene.add(player2Light);
-
-        // Loads the font.
-        // Code taken and modified from https://threejs.org/docs/#examples/en/loaders/FontLoader.
-        (new FontLoader()).load(
-            // resource URL
-            fontPath,
-
-            // onLoad callback
-            function ( font ) 
-            {
-                // do something with the font
-                theFont = font;
-            },
-
-            // onProgress callback
-            function ( xhr ) 
-            {
-                console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
-            },
-
-            // onError callback
-            function ( err ) 
-            {
-                console.log( 'An error happened' );
-            }
-        );
 
         function animate()
         {
@@ -403,12 +438,13 @@
             switch(key)
             {
                 // N case advances the game.
+                // Note: Holding N with the text display on can cause errors.
                 case "n":
                     if(!animRunning)
                     {
                         war.advanceGameStep(scene);
-                        if(!animRunning && war.deckSplit)
-                            setUpDeckDisplays();
+
+                        setUpDeckDisplays();
                     }
                     break;
                 // L case toggles ambient light.
@@ -429,6 +465,18 @@
                 // M case toggles shadows.
                 case "m":
                     toggleShadows();
+                    break;
+                // T case toggles the text display on and off.
+                case "t":
+                    textOn = !textOn;
+
+                    // Removes or adds the text if appropriate.
+                    if(!textOn)
+                        for(var i = 0; i < textArray.length; i++)
+                            scene.remove(textArray[i]);
+                    else
+                        setUpDeckDisplays();
+
                     break;
                 // W case decreases the light's Z value.
                 case "w":
