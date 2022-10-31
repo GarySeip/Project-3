@@ -13,12 +13,13 @@
             winning. When a player wins, their light will flash on and off. There are also toggleable text displays above 
             each play area informing the viewer of each player's deck sizes.
 
-            !! Do not hold N while the text displays are on. !!
+            !!! Do not hold N while the text displays are on. !!!
             It causes improper object movement and can freeze the program. Tapping N very quickly does not cause issues.
 
             Non Project Standard controls:
             T - Toggles the visibility of the text displays.
             H - Toggles hyper mode. A dramatic way of saying you can multiply the game speed by ten.
+            K - Toggles the player lights AKA the score lights on and off after the decks have been split.
         -->
     </head>
     <body>
@@ -84,11 +85,7 @@
                     // If an animation has finished, it is removed from the array.
                     animationArray.splice(i, 1);
             
-            if(animationArray.length == 0 && war.deckSplit)
-               handleScoreLights();
-            
             animRunning = animationArray.length != 0;
-            
         }
 
         /** 
@@ -307,6 +304,25 @@
                 movingLightOn = true;
             }
         }
+
+        /**
+         * This function toggles if the player score lights are on.
+         */
+        function togglePlayerLights()
+        {
+            if(playerLightsOn)
+            {
+                player0Light.intensity = 0;
+                player1Light.intensity = 0;
+                player2Light.intensity = 0;
+                playerLightsOn = false;
+            }
+            else
+            {
+                handleScoreLights();
+                playerLightsOn = true;
+            }
+        }
     // End Functions
     // Constants
         // The colors for the puzzle.
@@ -362,6 +378,8 @@
         var player0Light = new THREE.SpotLight(new THREE.Color(1, 1, 1), 0, 0, Math.PI / 6);
         var player1Light = new THREE.SpotLight(new THREE.Color(1, 1, 1), 0, 0, Math.PI / 6);
         var player2Light = new THREE.SpotLight(new THREE.Color(1, 1, 1), 0, 0, Math.PI / 6);
+        // playerLightsOn stores if the player lights are on.
+        var playerLightsOn = false;
         // lightArray stores the lights in the scene that cast shadows. 
         var lightArray = [movingLight, player0Light, player1Light, player2Light];
         // animRunning records if there are animations currently updating.
@@ -424,10 +442,16 @@
             if(war.deckSplit && !ambienceInitDisable && !animRunning)
             {
                 ambienceInitDisable = true;
+                playerLightsOn = true;
 
                 if(ambienceOn)
                     toggleAmbience();
             }
+
+            // If there is no animation happening, if the ambience has been initially disabled, and if a player has won or if
+            // the player lights are on, the score lights are updated.
+            if(!animRunning && ambienceInitDisable && (playerLightsOn || war.winnerID != -1))
+               handleScoreLights();
 
             // Updates when the previous frame was rendered.
             prevTime = time;
@@ -450,7 +474,7 @@
                 // N case advances the game.
                 // Note: Holding N with the text display on can cause errors.
                 case "n":
-                    if(!animRunning)
+                    if(!animRunning && war.winnerID == -1)
                     {
                         war.advanceGameStep(scene);
 
@@ -488,6 +512,10 @@
                         setUpDeckDisplays();
 
                     break;
+                // If the decks have been split, allows for the toggling of the score lights.
+                case "k":
+                    if(ambienceInitDisable)
+                        togglePlayerLights();
                 // W case decreases the light's Z value.
                 case "w":
                     if(movingLightOn)
