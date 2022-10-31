@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>CSC3210 Project 3</title>
+        <title>CSC3210 Project 3: War Simulator</title>
         <!-- 
             CSC3210 Project 2
             Authors: Jad Noureddine and Garald Seip
@@ -202,8 +202,11 @@
          */
         function setUpDeckDisplays()
         {
-            if(war.deckSplit && textOn)
+            // Only creates new text if the deck has been split, text is to be displayed, and if text is not already currently being created.
+            if(war.deckSplit && textOn && !creatingText)
             {
+                creatingText = true;
+
                 for(var i = 0; i < textArray.length; i++)
                     scene.remove(textArray[i]);
                 
@@ -215,6 +218,8 @@
                 {
                     scopeHack(response)
                 });
+
+                creatingText = false;
             }
         }
 
@@ -359,9 +364,14 @@
         var player2Light = new THREE.SpotLight(new THREE.Color(1, 1, 1), 0, 0, Math.PI / 6);
         // lightArray stores the lights in the scene that cast shadows. 
         var lightArray = [movingLight, player0Light, player1Light, player2Light];
+        // animRunning records if there are animations currently updating.
         var animRunning = false;
+        // textArray stores the text objects.
         var textArray = new Array();
+        // textOn stores if the text objects are visible.
         var textOn = true;
+        // creatingText records if text objects are currently being created.
+        var creatingText = false;
     // End Variables
         camera = new THREE.PerspectiveCamera(83, window.innerWidth / window.innerHeight, .1, 3000);
         // Camera position determined useing OrbitControls.
@@ -428,7 +438,7 @@
         function render()
         {
             renderer.render(scene, camera);
-        }
+        }        
 
         // The keyHandler provides functionality for the user to control the camera.
         // This was done for Above and Beyond.
