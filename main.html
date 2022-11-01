@@ -88,6 +88,13 @@
             animRunning = animationArray.length != 0;
         }
 
+        // Function that plays a Victory Sound 
+        function playAudio(){
+            var audioFile = new Audio("VictorySound.mp3");
+            audioFile.volume = 0.02; // Sets the volume so that it does not hurt ears
+            audioFile.play();
+        }
+
         /** 
          * This function adjusts the intensity of the score lights to reflect
          */
@@ -140,6 +147,8 @@
                     player0Light.intensity = 0;
                     player1Light.intensity = 0;
                 }
+
+                playAudio(); // Plays a Victory Sound when the player Wins
 
                 // Pushes the win animation to the animation helper.
                 animationArray.push(new AnimationHelper(null, null, null, true, winAnimation, 
